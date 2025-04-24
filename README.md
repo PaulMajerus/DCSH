@@ -4,6 +4,8 @@
 # DCSH
 
 <!-- badges: start -->
+
+[![R-CMD-check](https://github.com/PaulMajerus/DCSH/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/PaulMajerus/DCSH/actions/workflows/R-CMD-check.yaml)
 <!-- badges: end -->
 
 The goal of DCSH is to …
