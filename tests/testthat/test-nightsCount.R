@@ -1,5 +1,5 @@
 # Fonction test pour vérifier le bon comportement de nightsCount
-test_nightsCount <- function() {
+
 
   # Test 1: Vérifier que le calcul des nuits est correct (exemple simple)
   test_that("Calcul des nuits entre deux dates est correct", {
@@ -36,7 +36,4 @@ test_nightsCount <- function() {
     result <- nightsCount("20230505", "20230501", format = "%Y%m%d")
     expect_equal(result, -4)  # 1er mai - 5 mai = -4 nuits
   })
-}
 
-# Exécution des tests
-test_nightsCount()
