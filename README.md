@@ -15,7 +15,7 @@ The DCSH package is designed to provide users of DCSH data with a comprehensive 
 You can install the development version of DCSH like so:
 
 ``` r
-remotes::github("PaulMajerus/DCSH")
+remotes::install_github("PaulMajerus/DCSH")
 ```
 You’ll still need to render `README.Rmd` regularly, to keep `README.md`
 up-to-date. `devtools::build_readme()` is handy for this.
