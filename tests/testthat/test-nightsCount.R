@@ -36,4 +36,4 @@
     result <- nightsCount("20230505", "20230501", format = "%Y%m%d")
     expect_equal(result, -4)  # 1er mai - 5 mai = -4 nuits
   })
-
+#
