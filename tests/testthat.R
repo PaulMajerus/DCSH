@@ -8,5 +8,6 @@
 
 library(testthat)
 library(DCSH)
-
+library(waldo)
 test_check("DCSH")
+
