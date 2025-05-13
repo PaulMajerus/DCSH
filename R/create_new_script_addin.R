@@ -26,7 +26,7 @@ create_new_script_addin <- function() {
   if (is.null(auteur)) return(invisible(NULL))
 
   # Appel à ta fonction principale
-  create_new_script(
+  scriptTemplate(
     auteur = auteur,
     titre = titre,
     fileName = fileName,

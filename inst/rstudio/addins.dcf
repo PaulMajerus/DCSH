@@ -1,5 +1,5 @@
 Name: Nouveau script standardisé
 Description: Crée un nouveau script R avec en-tête structuré.
-Binding: scriptTemplate
+Binding: create_new_script_addin
 Interactive: true
 
