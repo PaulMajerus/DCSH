@@ -21,11 +21,16 @@ create_new_script_addin <- function() {
                                     default = 1)
   if (is.null(auteur)) return(invisible(NULL))
 
+  path <- rstudioapi::showPrompt(title = "Path", message = "Chemin d'accès",
+                                    default = ".")
+  if (is.null(auteur)) return(invisible(NULL))
+
   # Appel à ta fonction principale
   create_new_script(
     auteur = auteur,
     titre = titre,
     fileName = fileName,
-    version = version
+    version = version,
+    path = path
   )
 }
