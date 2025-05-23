@@ -2,13 +2,13 @@
 % Please edit documentation in R/create_new_script_addin.R
 \name{create_new_script_addin}
 \alias{create_new_script_addin}
-\title{Add-in interactif pour créer un script standardisé}
+\title{Add-in interactif pour creer un script standardise}
 \usage{
 create_new_script_addin()
 }
 \value{
-Crée un fichier script dans le répertoire courant
+Cree un fichier script dans le repertoire courant
 }
 \description{
-Add-in interactif pour créer un script standardisé
+Add-in interactif pour creer un script standardise
 }
