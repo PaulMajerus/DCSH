@@ -4,18 +4,12 @@
 \alias{nightsCount}
 \title{Hospital nights count}
 \usage{
-nightsCount(
-  startDate = character(0),
-  endDate = character(0),
-  format = "\%Y\%m\%d"
-)
+nightsCount(startDate = character(0), endDate = character(0))
 }
 \arguments{
-\item{startDate}{A character string representing the start date (e.g., "20230501").}
+\item{startDate}{A character string of length 12 representing the start date - time (e.g., "202305011200").}
 
-\item{endDate}{A character string representing the end date (e.g., "20230505").}
-
-\item{format}{A character string specifying the date format, in \code{as.Date()} style.}
+\item{endDate}{A character string of length 12 representing the end date - time (e.g., "202305052315").}
 }
 \value{
 An integer representing the number of nights between \code{startDate} and \code{endDate}.
@@ -26,7 +20,7 @@ Computes the number of nights between two dates, based on the difference in days
 Dates must be provided as character strings in the same specified format.
 }
 \examples{
-nightsCount("20230501", "20230505")
-nightsCount("20230501", "20230501")
-nightsCount("20230505", "20230501")
+nightsCount("202305011150", "202305051155")
+nightsCount("202305011230", "202305010152")
+nightsCount("202305051300", "202305010000")
 }
