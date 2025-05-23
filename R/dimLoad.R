@@ -62,7 +62,7 @@ dimLoad <- function(){
                                      function(n){
                                        DBI::dbGetQuery(con,query[n])
                                      }),
-                              janitor::make_clean_names(paste0("dim",tableConversionNom$nameOut),"small_camel"))
+                              janitor::make_clean_names(paste0("dim ",tableConversionNom$nameOut),"small_camel"))
 
 
   DBI::dbDisconnect(con)

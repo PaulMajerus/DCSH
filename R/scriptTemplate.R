@@ -14,6 +14,7 @@
 #'
 #' @importFrom janitor make_clean_names
 #' @importFrom tools toTitleCase
+#' @importFrom utils installed.packages
 #'
 #' @examples
 #' \dontrun{

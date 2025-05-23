@@ -3,9 +3,9 @@
 #' This function loads a vector of package names. It checks if the packages are
 #' installed and throws an error if not. Intended for use within packages to
 #' load dependencies that are already declared.
-#'
 #' @param packages Character vector of package names to load.
 #' @return Invisible. Loads the packages into the session.
+#' @importFrom utils installed.packages
 #' @export
 #' @examples
 #' \dontrun{

@@ -6,9 +6,6 @@
 \usage{
 dimLoad()
 }
-\arguments{
-\item{x}{Un paramètre non utilisé (prévu pour compatibilité ou extension future).}
-}
 \value{
 Une liste nommée de \code{data.frame}, chaque élément correspondant à une table dimensionnelle importée, avec des noms nettoyés en camelCase via \code{janitor::make_clean_names}.
 }
