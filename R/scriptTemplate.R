@@ -1,16 +1,16 @@
 #' Crée un script R structuré avec en-tête et sections prédéfinies
 #'
-#' Cette fonction génère automatiquement un fichier `.R` avec une structure standardisée,
-#' incluant un en-tête (titre, auteur, date, version) et des sections de travail classiques.
-#' Le fichier est nommé à partir de la date et du nom fourni, nettoyé au format camelCase.
+#' Cette fonction genere automatiquement un fichier `.R` avec une structure standardisee,
+#' incluant un en-tete (titre, auteur, date, version) et des sections de travail classiques.
+#' Le fichier est nomme a partir de la date et du nom fourni, nettoye au format camelCase.
 #'
-#' @param auteur Character. Nom de l’auteur à insérer dans l’en-tête. Par défaut `"Paul Majérus"`.
-#' @param titre Character. Titre affiché en haut du fichier. Par défaut `""`.
-#' @param fileName Character. Élément textuel à inclure dans le nom de fichier, nettoyé avec `make_clean_names(..., "small_camel")`. Peut être vide.
-#' @param version Character. Numéro de version du script. Par défaut `"1"`.
-#' @param path Character. Chemin du répertoire où le script sera enregistré. Par défaut `"."`.
+#' @param auteur Character. Nom de l auteur a inserer dans l’en-tete. Par defaut `"Paul Majerus"`.
+#' @param titre Character. Titre affiche en haut du fichier. Par defaut `""`.
+#' @param fileName Character. Element textuel a inclure dans le nom de fichier, nettoye avec `make_clean_names(..., "small_camel")`. Peut etre vide.
+#' @param version Character. Numero de version du script. Par defaut `"1"`.
+#' @param path Character. Chemin du repertoire ou le script sera enregistre. Par defaut `"."`.
 #'
-#' @return Aucun objet retourné, mais un fichier `.R` est créé sur disque. Affiche un message avec le chemin absolu du fichier.
+#' @return Aucun objet retourne, mais un fichier `.R` est cree sur disque. Affiche un message avec le chemin absolu du fichier.
 #'
 #' @importFrom janitor make_clean_names
 #' @importFrom tools toTitleCase
@@ -18,8 +18,8 @@
 #'
 #' @examples
 #' \dontrun{
-#' create_new_script(auteur = "Paul Majérus",
-#'                   titre = "Analyse des séjours hospitaliers",
+#' create_new_script(auteur = "Paul Majerus",
+#'                   titre = "Analyse des sejours hospitaliers",
 #'                   fileName = "sejours_2025",
 #'                   version = "2",
 #'                   path = "R/scripts")
@@ -27,7 +27,7 @@
 #'
 #' @export
 
-scriptTemplate <- function(auteur = "Paul Majérus", titre="",
+scriptTemplate <- function(auteur = "Paul Majerus", titre="",
                               fileName = character(),
                               version = "1", path = ".") {
   date_obj <- Sys.Date()
@@ -66,7 +66,7 @@ scriptTemplate <- function(auteur = "Paul Majérus", titre="",
     "# Remarques =========================================================== ----\n\n",
     "# ===================================================================== ----\n\n\n",
 
-    "# Pistes d'amelioration du programme ================================== ----\n\n",
+    "# Pistes d amelioration du programme ================================== ----\n\n",
     "# ===================================================================== ----\n\n\n",
 
     "# 1. Parametrage du programme ========================================= ----\n\n",
@@ -86,5 +86,5 @@ scriptTemplate <- function(auteur = "Paul Majérus", titre="",
   )
 
   writeLines(header, con = file_path)
-  message("Script créé : ", normalizePath(file_path))
+  message("Script cree : ", normalizePath(file_path))
 }

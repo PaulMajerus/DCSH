@@ -1,13 +1,13 @@
-#' Add-in interactif pour créer un script standardisé
+#' Add-in interactif pour creer un script standardise
 #'
-#' @return Crée un fichier script dans le répertoire courant
+#' @return Cree un fichier script dans le repertoire courant
 #' @export
 create_new_script_addin <- function() {
   if (!rstudioapi::isAvailable()) {
     stop("RStudio API non disponible.")
   }
 
-  # Demander les valeurs à l'utilisateur
+  # Demander les valeurs à l utilisateur
   titre <- rstudioapi::showPrompt(title = "Titre", message = "Titre du script", default = "Titre")
   if (is.null(titre)) return(invisible(NULL))
 
@@ -21,7 +21,7 @@ create_new_script_addin <- function() {
                                     default = 1)
   if (is.null(auteur)) return(invisible(NULL))
 
-  path <- rstudioapi::showPrompt(title = "Path", message = "Chemin d'accès",
+  path <- rstudioapi::showPrompt(title = "Path", message = "Chemin d acces",
                                     default = ".")
   if (is.null(auteur)) return(invisible(NULL))
 
