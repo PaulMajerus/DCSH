@@ -2,7 +2,6 @@
 #'
 #' Cette fonction se connecte à la base de données `dcshdb` via ODBC, récupère les tables dont le nom commence par `dim_`, applique une table de conversion pour sélectionner et renommer certaines tables selon une taxonomie standard, puis les importe toutes sous forme de liste de data.frames nommés.
 #'
-#' @param x Un paramètre non utilisé (prévu pour compatibilité ou extension future).
 #'
 #' @return Une liste nommée de `data.frame`, chaque élément correspondant à une table dimensionnelle importée, avec des noms nettoyés en camelCase via `janitor::make_clean_names`.
 #'
