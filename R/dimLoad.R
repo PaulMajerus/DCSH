@@ -21,6 +21,7 @@
 #' @import stringr
 #' @import dplyr
 #' @import janitor
+#' @import tibble
 #'
 #' @examples
 #' \dontrun{
@@ -60,7 +61,8 @@ dimLoad <- function(){
 
   tablesDimension <- setNames(lapply(1:length(query),
                                      function(n){
-                                       DBI::dbGetQuery(con,query[n])
+                                       DBI::dbGetQuery(con,query[n]) |>
+                                         tibble::as_tibble()
                                      }),
                               janitor::make_clean_names(paste0("dim ",tableConversionNom$nameOut),"small_camel"))
 
