@@ -129,12 +129,20 @@ queryBuildR <- function(var=character(),
                       })
 
   # Construction de la query LEFT JOIN
-  if(typeTable != "sejour"){
+
     leftjoinQuery <- lapply(typeTable,
                             function(i){
                               lapply(version,
                                      function(j){
-
+                                       if(
+                                         all(str_detect((tableConstructionDB |>
+                                                         dplyr::filter(version == j &
+                                                                       typeTable == i &
+                                                                       taxonomie %in% var) |>
+                                                         pull(table) |> unique()),"ClinicalDoc"))
+                                       ){
+                                         " "
+                                       }else{
                                        paste(paste0("LEFT JOIN ",
                                                     tableConstructionDB |>
                                                       dplyr::filter(taxonomie %in% var &
@@ -171,11 +179,9 @@ queryBuildR <- function(var=character(),
                                                       dplyr::pull(column),
                                                     " = sejour.docName"),
                                              collapse=" ")
+                                       }
                                      })
                             })
-  }else{
-    leftjoinQuery <-" "
-  }
 
 
 
