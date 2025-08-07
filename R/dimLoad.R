@@ -44,7 +44,7 @@ dimLoad <- function(){
   # Table de conversion des noms vers la taxonomie standard
   tableConversionNom <- data.frame(nameIn = tablesDim,
                                    nameOut = c("remove","prta","grds",
-                                               "soms","dids","dise",
+                                               "soms","dids",
                                                "idcf","prlp","grms",
                                                "grmc","adme","adad",
                                                "prcp","adpp","grrs",
