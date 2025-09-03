@@ -54,14 +54,6 @@ queryBuildR <- function(var=character(),
     dplyr::pull(typeTable) |>
     unique()
 
-  # Rajouter adna à la liste des variables si le service lieux est concernés, pour jointure
-  #if("serviceLieux" %in% typeTable & !("adna" %in% var)){var <- c(var,"adna")}
-
-
-
-  ########Ici il faut ajouter une ligne pour que docname soit remplacer par adna si serviceLieux
-  ######## Ajouter ça 'sur le côté' pour pouvoir le retirer facilement une fois que ça sera fait
-
   # Construction de la query SELECT
   selectQuery <- lapply(typeTable,
                         function(i){
@@ -212,10 +204,16 @@ queryBuildR <- function(var=character(),
                        function(i){
                          lapply(annee,
                                 function(j){
-                                  paste0("WHERE LEFT(sejour.Fin_Admission,4) IN (",
+                                  where <- paste0("WHERE LEFT(sejour.Fin_Admission,4) IN (",
                                          paste0("'",
                                                 j,
                                                 "'", collapse = ","),")")
+
+                                  if("dids" %in% var &
+                                     j == 2021){
+                                    where <- paste0(where," AND diagn.Type='DP'")
+                                  }
+                                  return(where)
                                 })
                        })
 

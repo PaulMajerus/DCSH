@@ -82,8 +82,10 @@ tableConstructionDB <- liste_tables_et_colonnes(con) |>
     str_to_lower(column) == "code_procedure" ~"prcp",
     str_detect(table,"Procedures") &
       str_to_lower(column) == "specialite" ~ "prsm",
-    str_detect(table,"Diag12") &
+    str_detect(table,"Diag1202[12]") &
       str_to_lower(column) == "code" ~ "didp",
+    str_detect(table,"Diag12020") &
+      str_to_lower(column) == "code" ~ "dids",
     str_detect(table,"Diag22") &
       str_to_lower(column) == "code" ~ "dise",
     str_detect(table,"Services2") &
@@ -130,12 +132,12 @@ tableConstructionDB <- liste_tables_et_colonnes(con) |>
     str_detect(table,"ClinicalDoc") ~ "sejour",
     str_detect(table,"Procedures") ~ "proced",
     str_detect(table,"Diag22") ~ "diags",
-    str_detect(table,"Diag12") ~ "diagp",
+    str_detect(table,"Diag12020") ~ "diag",
+    str_detect(table,"Diag1202[12]") ~ "diagp",
     str_detect(table,"AdminInfo") ~ "admin",
     str_detect(table,"DiagSejour") ~ "diagn",
     str_detect(table,"ServiceMapping") ~ "servm",
     str_detect(table,"Services2") ~ "sepc",
-    str_detect(table,"Encounter") ~ "encou",
     str_detect(table,"Mother") ~ "mothe",
     str_detect(table,"ServicesLieux") ~ "servm",
     str_detect(table,"Encounter") ~ "encou",
@@ -147,9 +149,10 @@ tableConstructionDB <- liste_tables_et_colonnes(con) |>
     str_detect(table,"ClinicalDoc") ~ "sejour",
     str_detect(table,"Procedures") ~ "procedure",
     str_detect(table,"Diag22") ~ "diagnosticSecondaire",
-    str_detect(table,"Diag12") ~ "diagnosticPrincipal",
+    str_detect(table,"Diag12020") ~ "sejour",
+    str_detect(table,"Diag1202[12]") ~ "diagnosticPrincipal",
     str_detect(table,"AdminInfo") ~ "sejour",
-    str_detect(table,"DiagSejour") ~ "diagnostic",
+    str_detect(table,"DiagSejour") ~ "sejour",
     str_detect(table,"ServiceMapping") ~ "serviceLieux",
     str_detect(table,"Services2") ~ "servicePriseEnCharge",
     str_detect(table,"Encounter") ~ "sejour",
