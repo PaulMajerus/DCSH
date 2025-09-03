@@ -213,6 +213,16 @@ queryBuildR <- function(var=character(),
                                      j == 2021){
                                     where <- paste0(where," AND diagn.Type='DP'")
                                   }
+
+                                  if("dise" %in% var &
+                                     j == 2021){
+                                    where <- paste0(where," AND diagn.Type='DS'")
+                                  }
+
+                                  if("didp" %in% var &
+                                     j == 2021){
+                                    where <- paste0(where," AND diagn.Type='DP'")
+                                  }
                                   return(where)
                                 })
                        })
