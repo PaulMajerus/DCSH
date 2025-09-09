@@ -50,9 +50,11 @@ queryBuildR <- function(var=character(),
   # Détermine les types de tables concernées
   typeTable <- tableConstructionDB |>
     dplyr::filter(taxonomie %in% var &
+                    !(typeTable == "serviceLieux" & taxonomie == "adna") &
                     stringr::str_detect(version,
                                         paste(annee,collapse="|"))) |>
-    dplyr::filter(!(typeTable == "serviceLieux" & taxonomie == "adna")) |>
+    #Eviter que service lieux apparaissent juste pour adna
+    #dplyr::filter(!(typeTable == "serviceLieux" & taxonomie == "adna")) |>
     dplyr::pull(typeTable) |>
     unique()
 
@@ -253,7 +255,6 @@ queryBuildR <- function(var=character(),
   }
 
 
-
   query <- lapply(1:length(unlist(selectQuery)),
                   function(x){
                     paste("SELECT",unlist(selectQuery)[[x]],
@@ -262,7 +263,5 @@ queryBuildR <- function(var=character(),
                           matNat,
                           unlist(whereQuery)[[x]])
                   })
-
   return(query)
-
 }
