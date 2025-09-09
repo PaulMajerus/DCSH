@@ -51,6 +51,7 @@ queryBuildR <- function(var=character(),
     dplyr::filter(taxonomie %in% var &
                     stringr::str_detect(version,
                                         paste(annee,collapse="|"))) |>
+    dplyr::filter(!(typeTable == "serviceLieux" & taxonomie == "adna")) |>
     dplyr::pull(typeTable) |>
     unique()
 
@@ -59,6 +60,7 @@ queryBuildR <- function(var=character(),
                         function(i){
                           lapply(annee,
                                  function(j){
+                                   varASelectionner <- var
                                    # Choix de la table d'extraction du docname (SEJOUR VS Autre table)
                                    if(i == "sejour"){
                                      docnameCall <- paste0("sejour.",
@@ -92,9 +94,9 @@ queryBuildR <- function(var=character(),
                                                            " as DocName")
                                    }
                                    if("adna" %in% var &
-                                      i == "serviceLieux"){ var <- var[-which(var=="adna")]}
+                                      i == "serviceLieux"){ varASelectionner <- var[-which(var=="adna")]}
                                    selectVar <- paste(unique(c(docnameCall,paste0(tableConstructionDB |>
-                                                                             dplyr::filter(taxonomie %in% var &
+                                                                             dplyr::filter(taxonomie %in% varASelectionner &
                                                                                              str_detect(version,as.character(j)) &
                                                                                              typeTable == i) |>
                                                                              dplyr::arrange(taxonomie) |>
@@ -102,7 +104,7 @@ queryBuildR <- function(var=character(),
                                                                              dplyr::pull(abrev) ,
                                                                            '.',
                                                                            tableConstructionDB |>
-                                                                             dplyr::filter(taxonomie %in% var &
+                                                                             dplyr::filter(taxonomie %in% varASelectionner &
                                                                                              str_detect(version,as.character(j)) &
                                                                                              typeTable==i) |>
                                                                              dplyr::arrange(taxonomie) |>
@@ -110,7 +112,7 @@ queryBuildR <- function(var=character(),
                                                                              dplyr::pull(column) ,
                                                                            " as ",
                                                                            tableConstructionDB |>
-                                                                             dplyr::filter(taxonomie %in% var &
+                                                                             dplyr::filter(taxonomie %in% varASelectionner &
                                                                                              str_detect(version,as.character(j)) &
                                                                                              typeTable==i) |>
                                                                              dplyr::arrange(taxonomie) |>
@@ -210,17 +212,20 @@ queryBuildR <- function(var=character(),
                                                 "'", collapse = ","),")")
 
                                   if("dids" %in% var &
-                                     j == 2021){
+                                     j == 2021 &
+                                     i == "sejour"){
                                     where <- paste0(where," AND diagn.Type='DP'")
                                   }
 
                                   if("dise" %in% var &
-                                     j == 2021){
+                                     j == 2021 &
+                                     i == "sejour"){
                                     where <- paste0(where," AND diagn.Type='DS'")
                                   }
 
                                   if("didp" %in% var &
-                                     j == 2021){
+                                     j == 2021 &
+                                     i == "sejour"){
                                     where <- paste0(where," AND diagn.Type='DP'")
                                   }
                                   return(where)
