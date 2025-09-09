@@ -33,6 +33,7 @@
 #' req <- queryBuildR(var = c("adda", "sods"), annee = c("2022", "2023"))
 #' cat(req[[1]])
 
+
 queryBuildR <- function(var=character(),
                         annee=character(),
                         matriculeNat = FALSE){
