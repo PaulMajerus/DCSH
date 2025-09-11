@@ -3,6 +3,7 @@ Title: This package compiles functions to help with DCSH data processing
 Version: 0.0.1.1000
 Authors@R: 
     person("Paul", "Majérus", , "paul.majerus@ms.etat.lu", role = c("aut", "cre"))
+Maintainer: Paul Majérus <paul.majerus@ms.etat.lu>
 Description: What the package does (one paragraph).
 License: MIT + file LICENSE
 Encoding: UTF-8
@@ -11,7 +12,7 @@ RoxygenNote: 7.3.2
 Suggests: 
     testthat (>= 3.0.0), waldo, rstudioapi
 Imports:
-    janitor, DBI, odbc, janitor, dplyr, stringr, lubridate, tibble
+    janitor, DBI, odbc, dplyr, stringr, lubridate, tibble
 Config/testthat/edition: 3
 URL: https://github.com/PaulMajerus/DCSH
 BugReports: https://github.com/PaulMajerus/DCSH/issues
