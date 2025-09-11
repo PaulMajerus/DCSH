@@ -1,7 +1,22 @@
+
+
+
+# fichiers générés automatiquement
 .Rproj.user
 .Rhistory
-.Rdata
+.RData
+.Ruserdata
 .httr-oauth
 .DS_Store
 .quarto
 .Renviron
+
+# artefacts de build R
+/man/
+/doc/
+/Meta/
+/help/
+/html/
+/R/*.rdb
+/R/*.rdx
+/R/sysdata.rda
