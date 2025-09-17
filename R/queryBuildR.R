@@ -185,7 +185,7 @@ queryBuildR <- function(var=character(),
                                                       unique(),
                                                     ".",
                                                     tableConstructionDB |>
-                                                      dplyr::filter(str_detect(version,as.character(j)) &
+                                                      dplyr::filter(str_detect(version,as.character(j)) == TRUE &
                                                                       typeTable==i &
                                                                       stringr::str_detect(table,"inicalDoc")==FALSE) |>
                                                       dplyr::group_by(table) |>
@@ -213,24 +213,6 @@ queryBuildR <- function(var=character(),
                                          paste0("'",
                                                 j,
                                                 "'", collapse = ","),")")
-
-                                  if("dids" %in% var &
-                                     j == 2021 &
-                                     i == "sejour"){
-                                    where <- paste0(where," AND diagn.Type='DP'")
-                                  }
-
-                                  if("dise" %in% var &
-                                     j == 2021 &
-                                     i == "sejour"){
-                                    where <- paste0(where," AND diagn.Type='DS'")
-                                  }
-
-                                  if("didp" %in% var &
-                                     j == 2021 &
-                                     i == "sejour"){
-                                    where <- paste0(where," AND diagn.Type='DP'")
-                                  }
                                   return(where)
                                 })
                        })
