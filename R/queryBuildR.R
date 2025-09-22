@@ -123,7 +123,7 @@ queryBuildR <- function(var=character(),
                                                          dplyr::distinct(taxonomie,.keep_all=TRUE) |>
                                                          dplyr::pull(taxonomie))
 
-                                   selectVar <- selectVar[-which(selectVar == ". as ")]
+                                   selectVar <- selectVar[which(selectVar != ". as ")]
 
                                      selectQuery <- paste(unique(c(docnameCall,
                                                                  selectVar)),
