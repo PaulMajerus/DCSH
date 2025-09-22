@@ -98,34 +98,41 @@ queryBuildR <- function(var=character(),
                                    }
                                    if("adna" %in% var &
                                       i == "serviceLieux"){ varASelectionner <- var[-which(var=="adna")]}
-                                   selectVar <- paste(unique(c(docnameCall,paste0(tableConstructionDB |>
-                                                                             dplyr::filter(taxonomie %in% varASelectionner &
-                                                                                             str_detect(version,as.character(j)) &
-                                                                                             typeTable == i) |>
-                                                                             dplyr::arrange(taxonomie) |>
-                                                                             dplyr::distinct(taxonomie,.keep_all=TRUE) |>
-                                                                             dplyr::pull(abrev) ,
-                                                                           '.',
-                                                                           tableConstructionDB |>
-                                                                             dplyr::filter(taxonomie %in% varASelectionner &
-                                                                                             str_detect(version,as.character(j)) &
-                                                                                             typeTable==i) |>
-                                                                             dplyr::arrange(taxonomie) |>
-                                                                             dplyr::distinct(taxonomie,.keep_all=TRUE) |>
-                                                                             dplyr::pull(column) ,
-                                                                           " as ",
-                                                                           tableConstructionDB |>
-                                                                             dplyr::filter(taxonomie %in% varASelectionner &
-                                                                                             str_detect(version,as.character(j)) &
-                                                                                             typeTable==i) |>
-                                                                             dplyr::arrange(taxonomie) |>
-                                                                             dplyr::distinct(taxonomie,.keep_all=TRUE) |>
-                                                                             dplyr::pull(taxonomie)))),
-                                                      collapse = ",")
-                                   if(matriculeNat == TRUE){
-                                     selectVar <- paste0("p.mat_an as matNat, ",selectVar)
-                                   }
-                                   return(selectVar)
+
+                                   selectVar <- paste0(tableConstructionDB |>
+                                                         dplyr::filter(taxonomie %in% varASelectionner &
+                                                                         str_detect(version,as.character(j)) &
+                                                                         typeTable == i) |>
+                                                         dplyr::arrange(taxonomie) |>
+                                                         dplyr::distinct(taxonomie,.keep_all=TRUE) |>
+                                                         dplyr::pull(abrev) ,
+                                                       '.',
+                                                       tableConstructionDB |>
+                                                         dplyr::filter(taxonomie %in% varASelectionner &
+                                                                         str_detect(version,as.character(j)) &
+                                                                         typeTable==i) |>
+                                                         dplyr::arrange(taxonomie) |>
+                                                         dplyr::distinct(taxonomie,.keep_all=TRUE) |>
+                                                         dplyr::pull(column) ,
+                                                       " as ",
+                                                       tableConstructionDB |>
+                                                         dplyr::filter(taxonomie %in% varASelectionner &
+                                                                         str_detect(version,as.character(j)) &
+                                                                         typeTable==i) |>
+                                                         dplyr::arrange(taxonomie) |>
+                                                         dplyr::distinct(taxonomie,.keep_all=TRUE) |>
+                                                         dplyr::pull(taxonomie))
+
+                                   selectVar <- selectVar[-which(selectVar == ". as ")]
+
+                                     selectQuery <- paste(unique(c(docnameCall,
+                                                                 selectVar)),
+                                                        collapse = ",")
+
+                                     if(matriculeNat == TRUE){
+                                       selectQuery <- paste0("p.mat_an as matNat, ",selectQuery)
+                                                                      }
+                                   return(selectQuery)
                                  })
                         })
 
