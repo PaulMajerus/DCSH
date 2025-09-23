@@ -126,10 +126,10 @@ if (!is.null(con)) {
       str_detect(table,"PriseEnCharge") &
         str_to_lower(column) == "specialite" ~ "mtsp",
       str_detect(table,"PriseEnCharge") &
-      #   str_to_lower(column) == "degre_urgence" ~ "mtdu",
-      # str_detect(table,"DiagSejour") &
-      #   version == "2021" &
-      #   str_to_lower(column) == "code" ~ "dids",
+        str_to_lower(column) == "degre_urgence" ~ "mtdu",
+      str_detect(table,"DiagSejour") &
+        version == "2021" &
+        str_to_lower(column) == "code" ~ "dids",
       str_detect(table,"ServicesLieux") &
         str_to_lower(column) == "service" ~ "shsh",
       str_detect(table,"ServicesLieux") &
@@ -185,14 +185,7 @@ if (!is.null(con)) {
       str_detect(table,"Drg") ~ "sejour",
       TRUE ~ "ERROR"
     )) |>
-    as_tibble() |>
-    bind_rows(data.frame(table = rep("vDiag12021",2),
-                         column = c("Code","docName"),
-                         version = rep("2021",2),
-                         taxonomie = c("dids","DocName"),
-                         restriction = rep(NA,2),
-                         abrev = c("diagn","diagn"),
-                         typeTable = c("sejour","sejour")))
+    as_tibble()
 
   usethis::use_data(tableConstructionDB, overwrite = TRUE)
 

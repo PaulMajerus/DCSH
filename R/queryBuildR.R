@@ -220,6 +220,10 @@ queryBuildR <- function(var=character(),
                                          paste0("'",
                                                 j,
                                                 "'", collapse = ","),")")
+
+                                  if(j == 2021 &
+                                     i == "sejour" &
+                                     "dids" %in% var) { where <- paste0(where," AND diagn.Type = 'DP'")}
                                   return(where)
                                 })
                        })
