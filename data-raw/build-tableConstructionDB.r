@@ -152,20 +152,20 @@ if (!is.null(con)) {
                                  "WHERE diag.Type = 'DP'",
                                  NA)) |>
     mutate(abrev = case_when(
-      str_detect(table,"ClinicalDoc") ~ "sejour",
-      str_detect(table,"Procedures") ~ "proced",
-      str_detect(table,"Diag22") ~ "diags",
-      str_detect(table,"Diag12020") ~ "diag",
-      str_detect(table,"Diag1202[12]") ~ "diagp",
-      str_detect(table,"AdminInfo") ~ "admin",
-      str_detect(table,"DiagSejour") ~ "diagn",
-      str_detect(table,"ServiceMapping") ~ "servm",
-      str_detect(table,"Services2") ~ "sepc",
-      str_detect(table,"Mother") ~ "mothe",
-      str_detect(table,"ServicesLieux") ~ "servm",
-      str_detect(table,"Encounter") ~ "encou",
-      str_detect(table,"PriseEnCharge") ~ "medtr",
-      str_detect(table,"Drg") ~ "groupage",
+      str_detect(table,"ClinicalDoc") ~ "[sejour]",
+      str_detect(table,"Procedures") ~ "[proced]",
+      str_detect(table,"Diag22") ~ "[diags]",
+      str_detect(table,"Diag12020") ~ "[diag]",
+      str_detect(table,"Diag1202[12]") ~ "[diagp]",
+      str_detect(table,"AdminInfo") ~ "[admin]",
+      str_detect(table,"DiagSejour") ~ "[diagn]",
+      str_detect(table,"ServiceMapping") ~ "[servm]",
+      str_detect(table,"Services2") ~ "[sepc]",
+      str_detect(table,"Mother") ~ "[mothe]",
+      str_detect(table,"ServicesLieux") ~ "[servm]",
+      str_detect(table,"Encounter") ~ "[encou]",
+      str_detect(table,"PriseEnCharge") ~ "[medtr]",
+      str_detect(table,"Drg") ~ "[groupage]",
       TRUE ~ "ERROR"
     )) |>
     mutate(typeTable = case_when(
@@ -185,7 +185,8 @@ if (!is.null(con)) {
       str_detect(table,"Drg") ~ "sejour",
       TRUE ~ "ERROR"
     )) |>
-    as_tibble()
+    as_tibble() |>
+    mutate(column = paste0("[",column,"]"))
 
   usethis::use_data(tableConstructionDB, overwrite = TRUE)
 

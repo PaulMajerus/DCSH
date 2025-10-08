@@ -42,6 +42,7 @@ queryBuildR <- function(var=character(),
   # Détermine les versions de codage impliquées dans la query
   version <- tableConstructionDB |>
     dplyr::filter(taxonomie %in% var &
+                    typeTable != "ERROR" &
                     stringr::str_detect(version,
                                         paste(annee,collapse="|"))) |>
     dplyr::pull(version) |>
@@ -50,6 +51,7 @@ queryBuildR <- function(var=character(),
   # Détermine les types de tables concernées
   typeTable <- tableConstructionDB |>
     dplyr::filter(taxonomie %in% var &
+                    typeTable != "ERROR" &
                     !(typeTable == "serviceLieux" & taxonomie == "adna") &
                     stringr::str_detect(version,
                                         paste(annee,collapse="|"))) |>
@@ -86,13 +88,13 @@ queryBuildR <- function(var=character(),
                                      docnameCall <- paste0(tableConstructionDB |>
                                                              dplyr::filter(typeTable == i &
                                                                              str_detect(version,as.character(j)) &
-                                                                             stringr::str_to_lower(column)=="docname") |>
+                                                                             stringr::str_to_lower(column)=="[docname]") |>
                                                              dplyr::pull(abrev),
                                                            ".",
                                                            tableConstructionDB |>
                                                              dplyr::filter(typeTable == i &
                                                                              str_detect(version,as.character(j)) &
-                                                                             stringr::str_to_lower(column)=="docname") |>
+                                                                             stringr::str_to_lower(column)=="[docname]") |>
                                                              dplyr::pull(column),
                                                            " as DocName")
                                    }
@@ -200,10 +202,10 @@ queryBuildR <- function(var=character(),
                                                       dplyr::ungroup() |>
                                                       dplyr::filter(
                                                         if (i == "serviceLieux") column == "NO_SEJOUR"
-                                                        else stringr::str_to_lower(column) == "docname") |>
+                                                        else stringr::str_to_lower(column) == "[docname]") |>
                                                       dplyr::pull(column),
-                                                    if(i == "serviceLieux") " = sejour.Numero_sejour"
-                                                    else " = sejour.docName"),
+                                                    if(i == "serviceLieux") " = [sejour].[Numero_sejour]"
+                                                    else " = [sejour].[docName]"),
                                              collapse=" ")
                                        }
                                      })
@@ -216,32 +218,32 @@ queryBuildR <- function(var=character(),
                        function(i){
                          lapply(annee,
                                 function(j){
-                                  where <- paste0("WHERE LEFT(sejour.Fin_Admission,4) IN (",
+                                  where <- paste0("WHERE LEFT([sejour].[Fin_Admission],4) IN (",
                                          paste0("'",
                                                 j,
                                                 "'", collapse = ","),")")
 
                                   if(j == 2021 &
                                      i == "sejour" &
-                                     "dids" %in% var) { where <- paste0(where," AND diagn.Type = 'DP'")}
+                                     "dids" %in% var) { where <- paste0(where," AND [diagn].[Type] = 'DP'")}
                                   return(where)
                                 })
                        })
 
   if(matriculeNat == TRUE){
     matNat <- "LEFT JOIN (
-    SELECT mat_an, pama
+    SELECT [mat_an], [pama]
     FROM (
-      SELECT mat_an, mat_incci_an, mat_chdn_an, mat_hrs_an, mat_chem_an, mat_chl_an, mat_cfb_an
-      FROM curative.key_mapping_igss
+      SELECT [mat_an], [mat_incci_an], [mat_chdn_an], [mat_hrs_an], [mat_chem_an], [mat_chl_an], [mat_cfb_an]
+      FROM [curative].[key_mapping_igss]
     ) AS src
     UNPIVOT (
       pama FOR idcf IN (
-        mat_incci_an, mat_chdn_an, mat_hrs_an, mat_chem_an, mat_chl_an, mat_cfb_an
+        mat_incci_an], mat_chdn_an, mat_hrs_an, mat_chem_an, mat_chl_an, mat_cfb_an
       )
     ) AS unpvt
   ) AS p
-  ON p.pama = sejour.Matricule"
+  ON p.pama = [sejour].[Matricule]"
     matNat <- stringr::str_replace_all(matNat,"\n","")
   }else{
     matNat <- ""
