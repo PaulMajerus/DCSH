@@ -20,7 +20,9 @@ liste_tables_et_colonnes <- function(con) {
                    "ServicesLieux")
   tables <- str_subset(tables,
                        paste(listeTables, collapse = "|"))
-  tables <- str_subset(tables, "_delete|Union|v.{1,}2024", negate = TRUE)
+  tables <- str_subset(tables,
+                       "_delete|Union",
+                       negate = TRUE)
   result <- lapply(tables, function(tbl) {
     colonnes <- dbListFields(con, tbl)
     data.frame(table = tbl, column = colonnes, stringsAsFactors = FALSE)
