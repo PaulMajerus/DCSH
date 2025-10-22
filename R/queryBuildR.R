@@ -68,11 +68,11 @@ queryBuildR <- function(var=character(),
                                    varASelectionner <- var
                                    # Choix de la table d'extraction du docname (SEJOUR VS Autre table)
                                    if(i == "sejour"){
-                                     docnameCall <- paste0("sejour.",
+                                     docnameCall <- paste0("[sejour].",
                                                            tableConstructionDB |>
                                                              dplyr::filter(str_detect(version,as.character(j)) &
                                                                              stringr::str_detect(table,"ClinicalDoc2") &
-                                                                             stringr::str_to_lower(column)=="docname") |>
+                                                                             stringr::str_to_lower(column)=="[docname]") |>
                                                              dplyr::pull(column),
                                                            " as DocName")
                                    }else if(i =="serviceLieux"){
@@ -80,7 +80,7 @@ queryBuildR <- function(var=character(),
                                                            tableConstructionDB |>
                                                              dplyr::filter(str_detect(version,as.character(j)) &
                                                                              stringr::str_detect(table,"ClinicalDoc2") &
-                                                                             stringr::str_detect(taxonomie,"adna")) |>
+                                                                             stringr::str_detect(taxonomie,"[adna]")) |>
                                                              dplyr::pull(column),
                                                            " as adna")
                                    }else{
