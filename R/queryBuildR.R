@@ -74,14 +74,14 @@ queryBuildR <- function(var=character(),
                                                                              stringr::str_detect(table,"ClinicalDoc2") &
                                                                              stringr::str_to_lower(column)=="[docname]") |>
                                                              dplyr::pull(column),
-                                                           " as DocName")
+                                                           " as DocName") |> unique()
                                    }else if(i =="serviceLieux"){
-                                     docnameCall <- paste0("sejour.",
+                                     docnameCall <- paste0("[sejour].",
                                                            tableConstructionDB |>
                                                              dplyr::filter(str_detect(version,as.character(j)) &
                                                                              stringr::str_detect(table,"ClinicalDoc2") &
-                                                                             stringr::str_detect(taxonomie,"[adna]")) |>
-                                                             dplyr::pull(column),
+                                                                             stringr::str_detect(taxonomie,"adna")) |>
+                                                             dplyr::pull(column)|> unique(),
                                                            " as adna")
                                    }else{
 
