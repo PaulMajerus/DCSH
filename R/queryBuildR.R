@@ -201,7 +201,7 @@ queryBuildR <- function(var=character(),
                                                       dplyr::filter(any(taxonomie %in% var)) |>
                                                       dplyr::ungroup() |>
                                                       dplyr::filter(
-                                                        if (i == "serviceLieux") column == "NO_SEJOUR"
+                                                        if (i == "serviceLieux") column == "[NO_SEJOUR]"
                                                         else stringr::str_to_lower(column) == "[docname]") |>
                                                       dplyr::pull(column),
                                                     if(i == "serviceLieux") " = [sejour].[Numero_sejour]"
