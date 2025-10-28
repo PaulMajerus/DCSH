@@ -160,6 +160,7 @@ if (!is.null(con)) {
       str_detect(table,"Diag12020") ~ "[diag]",
       str_detect(table,"Diag1202[12]") ~ "[diagp]",
       str_detect(table,"AdminInfo") ~ "[admin]",
+      str_detect(table,"vAdminInfo") ~ "[vadmin]",
       str_detect(table,"DiagSejour") ~ "[diagn]",
       str_detect(table,"ServiceMapping") ~ "[servm]",
       str_detect(table,"Services2") ~ "[sepc]",

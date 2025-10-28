@@ -239,7 +239,7 @@ queryBuildR <- function(var=character(),
     ) AS src
     UNPIVOT (
       pama FOR idcf IN (
-        mat_incci_an], mat_chdn_an, mat_hrs_an, mat_chem_an, mat_chl_an, mat_cfb_an
+        mat_incci_an, mat_chdn_an, mat_hrs_an, mat_chem_an, mat_chl_an, mat_cfb_an
       )
     ) AS unpvt
   ) AS p
