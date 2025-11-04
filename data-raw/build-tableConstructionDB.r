@@ -107,7 +107,7 @@ if (!is.null(con)) {
       str_to_lower(column) == "code_procedure" ~"prcp",
       str_detect(table,"Procedures") &
         str_to_lower(column) == "specialite" ~ "prsm",
-      str_detect(table,"Diag1202[12]") &
+      str_detect(table,"Diag1202[124]") &
         str_to_lower(column) == "code" ~ "didp",
       str_detect(table,"Diag12020") &
         str_to_lower(column) == "code" ~ "dids",
@@ -158,7 +158,7 @@ if (!is.null(con)) {
       str_detect(table,"Procedures") ~ "[proced]",
       str_detect(table,"Diag22") ~ "[diags]",
       str_detect(table,"Diag12020") ~ "[diag]",
-      str_detect(table,"Diag1202[12]") ~ "[diagp]",
+      str_detect(table,"Diag1202[124]") ~ "[diagp]",
       str_detect(table,"AdminInfo") ~ "[admin]",
       str_detect(table,"vAdminInfo") ~ "[vadmin]",
       str_detect(table,"DiagSejour") ~ "[diagn]",
@@ -171,12 +171,15 @@ if (!is.null(con)) {
       str_detect(table,"Drg") ~ "[groupage]",
       TRUE ~ "ERROR"
     )) |>
+    mutate(abrev = if_else(str_detect(table,"^v.{1,}2024$") == TRUE,
+                           paste0("[","v",str_sub(abrev,2,-1)),
+                           abrev)) |>
     mutate(typeTable = case_when(
       str_detect(table,"ClinicalDoc") ~ "sejour",
       str_detect(table,"Procedures") ~ "procedure",
       str_detect(table,"Diag22") ~ "diagnosticSecondaire",
       str_detect(table,"Diag12020") ~ "sejour",
-      str_detect(table,"Diag1202[12]") ~ "diagnosticPrincipal",
+      str_detect(table,"Diag1202[124]") ~ "diagnosticPrincipal",
       str_detect(table,"AdminInfo") ~ "sejour",
       str_detect(table,"DiagSejour") ~ "sejour",
       str_detect(table,"ServiceMapping") ~ "serviceLieux",
