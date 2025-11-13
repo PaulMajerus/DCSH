@@ -23,6 +23,9 @@ liste_tables_et_colonnes <- function(con) {
   tables <- str_subset(tables,
                        "_delete|Union",
                        negate = TRUE)
+  tables <- str_subset(tables,
+                       "v.{1,}2024$",
+                       negate = TRUE)
   result <- lapply(tables, function(tbl) {
     colonnes <- dbListFields(con, tbl)
     data.frame(table = tbl, column = colonnes, stringsAsFactors = FALSE)
@@ -192,7 +195,14 @@ if (!is.null(con)) {
       TRUE ~ "ERROR"
     )) |>
     as_tibble() |>
-    mutate(column = paste0("[",column,"]"))
+    mutate(column = paste0("[",column,"]")) |>
+    bind_rows(data.frame(table = "NonDisponible",
+                         column = "NonDisponible",
+                         version = "2018,2019,2020",
+                         taxonomie = "didp",
+                         restriction = NA,
+                         abrev = "NonDisponible",
+                         typeTable = "diagnosticPrincipal"))
 
   usethis::use_data(tableConstructionDB, overwrite = TRUE)
 

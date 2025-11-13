@@ -258,5 +258,8 @@ queryBuildR <- function(var=character(),
                           matNat,
                           unlist(whereQuery)[[x]])
                   })
+
+  query <- query[!grepl("NonDisponible", query)]
+
   return(query)
 }
