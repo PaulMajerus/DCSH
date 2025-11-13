@@ -13,22 +13,24 @@ library(usethis)
 
 # Fonction utilitaire
 liste_tables_et_colonnes <- function(con) {
-  tables <- dbListTables(con)
+  tables <- DBI::dbListTables(con)
   listeTables <- c("AdminInfo","ClinicalDoc2",
                    "Diag[12]20","EncounterInfo","Drg20","Mother2","Procedures2",
                    "Services20","PriseEnCharge20","DiagSejour2","ServiceMapping",
                    "ServicesLieux")
-  tables <- str_subset(tables,
+  tables <- stringr::str_subset(tables,
                        paste(listeTables, collapse = "|"))
-  tables <- str_subset(tables,
+  tables <- stringr::str_subset(tables,
                        "_delete|Union",
                        negate = TRUE)
-  tables <- str_subset(tables,
+  tables <- stringr::str_subset(tables,
                        "v.{1,}2024$",
                        negate = TRUE)
   result <- lapply(tables, function(tbl) {
-    colonnes <- dbListFields(con, tbl)
-    data.frame(table = tbl, column = colonnes, stringsAsFactors = FALSE)
+    colonnes <- DBI::dbListFields(con, tbl)
+    data.frame(table = tbl,
+               column = colonnes,
+               stringsAsFactors = FALSE)
   })
   do.call(rbind, result)
 }
@@ -50,7 +52,7 @@ if (!is.null(con)) {
   message("✅ Connexion réussie, construction du dataset...")
 
   tableConstructionDB <- liste_tables_et_colonnes(con) |>
-    mutate(version = str_sub(table, -4, -1),
+    dplyr::mutate(version = stringr::str_sub(table, -4, -1),
            version = if_else(version == "2020",
                              "2018,2019,2020",
                              if_else(version == "2022",
@@ -59,144 +61,144 @@ if (!is.null(con)) {
            version = if_else(table=="ServiceMapping",
                              "2021,2022,2023",
                              version)) |>
-    mutate(taxonomie = case_when(
-      str_to_lower(column) == "docname" ~ "DocName",
-      str_to_lower(column) == "nationalite" ~ "pana",
-      str_to_lower(column) == "age_jours" ~ "nnaj",
-      str_to_lower(column) == "assurabilite" ~ "paas",
-      str_to_lower(column) == "matricule" ~ "pama",
-      str_to_lower(column) == "code_postal" ~ "pacp",
-      str_to_lower(column) == "pays" ~ "papr",
-      str_to_lower(column) == "genre" ~ "pase",
-      str_to_lower(column) == "date_naissance" ~ "padn",
-      str_to_lower(column) == "code_fournisseur" ~ "idcf",
-      str_to_lower(column) %in% c("numero_sejour",
+    dplyr::mutate(taxonomie = dplyr::case_when(
+      stringr::str_to_lower(column) == "docname" ~ "DocName",
+      stringr::str_to_lower(column) == "nationalite" ~ "pana",
+      stringr::str_to_lower(column) == "age_jours" ~ "nnaj",
+      stringr::str_to_lower(column) == "assurabilite" ~ "paas",
+      stringr::str_to_lower(column) == "matricule" ~ "pama",
+      stringr::str_to_lower(column) == "code_postal" ~ "pacp",
+      stringr::str_to_lower(column) == "pays" ~ "papr",
+      stringr::str_to_lower(column) == "genre" ~ "pase",
+      stringr::str_to_lower(column) == "date_naissance" ~ "padn",
+      stringr::str_to_lower(column) == "code_fournisseur" ~ "idcf",
+      stringr::str_to_lower(column) %in% c("numero_sejour",
                                   "no_sejour")~ "adna",
-      str_to_lower(column) == "provenance" ~ "adpp",
-      str_to_lower(column) == "debut_admission" ~ "adda",
-      str_to_lower(column) == "fin_admission" ~ "sods",
-      str_to_lower(column) == "destination" ~ "soms",
-      str_to_lower(column) == "medecin_traitant" ~ "adcm",
-      str_to_lower(column) == "etabl_provenance" ~ "adep",
-      str_to_lower(column) == "etabl_destination" ~ "soed",
-      str_to_lower(column) == "drg_admission" ~ "grda",
-      str_to_lower(column) == "mdc_admission" ~ "grma",
-      str_to_lower(column) == "rom_admission" ~ "grra",
-      str_to_lower(column) == "soi_admission" ~ "grsa",
-      str_to_lower(column) == "drg_group" ~ "grds",
-      str_to_lower(column) == "mdc" ~ "grms",
-      str_to_lower(column) == "soi" ~ "grss",
-      str_to_lower(column) == "rom" ~ "grrs",
-      str_to_lower(column) == "med_surg" ~ "grmc",
-      str_to_lower(column) == "mode_admission" ~ "adma",
-      str_to_lower(column) == "modalite_entree" ~ "adme",
-      str_to_lower(column) == "mode_adressage" ~ "adad",
-      str_to_lower(column) == "passage_urgence" ~ "adpu",
-      str_to_lower(column) == "diagnostic_sejour" ~ "dids",
-      str_to_lower(column) == "matricule_mere" ~ "nnmm",
-      str_to_lower(column) == "seq_naissance" ~ "nnsn",
-      str_to_lower(column) == "poids(g)" ~ "nnpn",
-      str_to_lower(column) == "duree_gestation(wk)" ~ "nndg",
-      str_to_lower(column) == "apgar1" ~ "nna1",
-      str_to_lower(column) == "apgar5" ~ "nna5",
-      str_to_lower(column) == "saturation1" ~ "nnc1",
-      str_to_lower(column) == "saturation2" ~ "nnc2",
-      str_to_lower(column) == "saturation3" ~ "nnc3",
-      str_to_lower(column) == "present_admission" ~ "dipa",
-      str_to_lower(column) == "date_procedure" ~ "prdp",
-      str_to_lower(column) == "code_medecin_consultant" ~ "prcm",
-      str_to_lower(column) == "lieu_procedure" ~ "prlp",
-      str_to_lower(column) == "technique_anesthesie" ~ "prta",
-      str_to_lower(column) == "code_procedure" ~"prcp",
-      str_detect(table,"Procedures") &
-        str_to_lower(column) == "specialite" ~ "prsm",
-      str_detect(table,"Diag1202[124]") &
-        str_to_lower(column) == "code" ~ "didp",
-      str_detect(table,"Diag12020") &
-        str_to_lower(column) == "code" ~ "dids",
-      str_detect(table,"Diag22") &
-        str_to_lower(column) == "code" ~ "dise",
-      str_detect(table,"Services2") &
-        str_to_lower(column) == "site_hospitalier" ~ "smsi",
-      str_detect(table,"Services2") &
-        str_to_lower(column) == "service" ~ "smsh",
-      str_detect(table,"Services2") &
-        str_to_lower(column) == "date_debut" ~ "smdd",
-      str_detect(table,"Services2") &
-        str_to_lower(column) == "date_fin" ~ "smdf",
-      str_detect(table,"PriseEnCharge") &
-        str_to_lower(column) == "date_debut" ~ "mtdd",
-      str_detect(table,"PriseEnCharge") &
-        str_to_lower(column) == "date_fin" ~ "mtdf",
-      str_detect(table,"PriseEnCharge") &
-        str_to_lower(column) == "specialite" ~ "mtsp",
-      str_detect(table,"PriseEnCharge") &
-        str_to_lower(column) == "degre_urgence" ~ "mtdu",
-      str_detect(table,"DiagSejour") &
+      stringr::str_to_lower(column) == "provenance" ~ "adpp",
+      stringr::str_to_lower(column) == "debut_admission" ~ "adda",
+      stringr::str_to_lower(column) == "fin_admission" ~ "sods",
+      stringr::str_to_lower(column) == "destination" ~ "soms",
+      stringr::str_to_lower(column) == "medecin_traitant" ~ "adcm",
+      stringr::str_to_lower(column) == "etabl_provenance" ~ "adep",
+      stringr::str_to_lower(column) == "etabl_destination" ~ "soed",
+      stringr::str_to_lower(column) == "drg_admission" ~ "grda",
+      stringr::str_to_lower(column) == "mdc_admission" ~ "grma",
+      stringr::str_to_lower(column) == "rom_admission" ~ "grra",
+      stringr::str_to_lower(column) == "soi_admission" ~ "grsa",
+      stringr::str_to_lower(column) == "drg_group" ~ "grds",
+      stringr::str_to_lower(column) == "mdc" ~ "grms",
+      stringr::str_to_lower(column) == "soi" ~ "grss",
+      stringr::str_to_lower(column) == "rom" ~ "grrs",
+      stringr::str_to_lower(column) == "med_surg" ~ "grmc",
+      stringr::str_to_lower(column) == "mode_admission" ~ "adma",
+      stringr::str_to_lower(column) == "modalite_entree" ~ "adme",
+      stringr::str_to_lower(column) == "mode_adressage" ~ "adad",
+      stringr::str_to_lower(column) == "passage_urgence" ~ "adpu",
+      stringr::str_to_lower(column) == "diagnostic_sejour" ~ "dids",
+      stringr::str_to_lower(column) == "matricule_mere" ~ "nnmm",
+      stringr::str_to_lower(column) == "seq_naissance" ~ "nnsn",
+      stringr::str_to_lower(column) == "poids(g)" ~ "nnpn",
+      stringr::str_to_lower(column) == "duree_gestation(wk)" ~ "nndg",
+      stringr::str_to_lower(column) == "apgar1" ~ "nna1",
+      stringr::str_to_lower(column) == "apgar5" ~ "nna5",
+      stringr::str_to_lower(column) == "saturation1" ~ "nnc1",
+      stringr::str_to_lower(column) == "saturation2" ~ "nnc2",
+      stringr::str_to_lower(column) == "saturation3" ~ "nnc3",
+      stringr::str_to_lower(column) == "present_admission" ~ "dipa",
+      stringr::str_to_lower(column) == "date_procedure" ~ "prdp",
+      stringr::str_to_lower(column) == "code_medecin_consultant" ~ "prcm",
+      stringr::str_to_lower(column) == "lieu_procedure" ~ "prlp",
+      stringr::str_to_lower(column) == "technique_anesthesie" ~ "prta",
+      stringr::str_to_lower(column) == "code_procedure" ~"prcp",
+      stringr::str_detect(table,"Procedures") &
+        stringr::str_to_lower(column) == "specialite" ~ "prsm",
+      stringr::str_detect(table,"Diag1202[124]") &
+        stringr::str_to_lower(column) == "code" ~ "didp",
+      stringr::str_detect(table,"Diag12020") &
+        stringr::str_to_lower(column) == "code" ~ "dids",
+      stringr::str_detect(table,"Diag22") &
+        stringr::str_to_lower(column) == "code" ~ "dise",
+      stringr::str_detect(table,"Services2") &
+        stringr::str_to_lower(column) == "site_hospitalier" ~ "smsi",
+      stringr::str_detect(table,"Services2") &
+        stringr::str_to_lower(column) == "service" ~ "smsh",
+      stringr::str_detect(table,"Services2") &
+        stringr::str_to_lower(column) == "date_debut" ~ "smdd",
+      stringr::str_detect(table,"Services2") &
+        stringr::str_to_lower(column) == "date_fin" ~ "smdf",
+      stringr::str_detect(table,"PriseEnCharge") &
+        stringr::str_to_lower(column) == "date_debut" ~ "mtdd",
+      stringr::str_detect(table,"PriseEnCharge") &
+        stringr::str_to_lower(column) == "date_fin" ~ "mtdf",
+      stringr::str_detect(table,"PriseEnCharge") &
+        stringr::str_to_lower(column) == "specialite" ~ "mtsp",
+      stringr::str_detect(table,"PriseEnCharge") &
+        stringr::str_to_lower(column) == "degre_urgence" ~ "mtdu",
+      stringr::str_detect(table,"DiagSejour") &
         version == "2021" &
-        str_to_lower(column) == "code" ~ "dids",
-      str_detect(table,"ServicesLieux") &
-        str_to_lower(column) == "service" ~ "shsh",
-      str_detect(table,"ServicesLieux") &
-        str_to_lower(column) == "date_debut" ~ "shdd",
-      str_detect(table,"ServicesLieux") &
-        str_to_lower(column) == "date_fin" ~ "shdf",
-      str_detect(table,"ServicesLieux") &
-        str_to_lower(column) == "site_hospitalier" ~ "shsi",
-      str_detect(table,"Mapping") &
-        str_to_lower(column) == "sh" ~ "shsh",
-      str_detect(table,"Mapping") &
-        str_to_lower(column) == "entree" ~ "shdd",
-      str_detect(table,"Mapping") &
-        str_to_lower(column) == "sortie" ~ "shdf",
-      str_detect(table,"Mapping") &
-        str_to_lower(column) == "site" ~ "shsi",
+        stringr::str_to_lower(column) == "code" ~ "dids",
+      stringr::str_detect(table,"ServicesLieux") &
+        stringr::str_to_lower(column) == "service" ~ "shsh",
+      stringr::str_detect(table,"ServicesLieux") &
+        stringr::str_to_lower(column) == "date_debut" ~ "shdd",
+      stringr::str_detect(table,"ServicesLieux") &
+        stringr::str_to_lower(column) == "date_fin" ~ "shdf",
+      stringr::str_detect(table,"ServicesLieux") &
+        stringr::str_to_lower(column) == "site_hospitalier" ~ "shsi",
+      stringr::str_detect(table,"Mapping") &
+        stringr::str_to_lower(column) == "sh" ~ "shsh",
+      stringr::str_detect(table,"Mapping") &
+        stringr::str_to_lower(column) == "entree" ~ "shdd",
+      stringr::str_detect(table,"Mapping") &
+        stringr::str_to_lower(column) == "sortie" ~ "shdf",
+      stringr::str_detect(table,"Mapping") &
+        stringr::str_to_lower(column) == "site" ~ "shsi",
     )) |>
-    mutate(restriction = if_else(taxonomie == "dids" &
+    dplyr::mutate(restriction = if_else(taxonomie == "dids" &
                                    version == "2021",
                                  "WHERE diag.Type = 'DP'",
                                  NA)) |>
-    mutate(abrev = case_when(
-      str_detect(table,"ClinicalDoc") ~ "[sejour]",
-      str_detect(table,"Procedures") ~ "[proced]",
-      str_detect(table,"Diag22") ~ "[diags]",
-      str_detect(table,"Diag12020") ~ "[diag]",
-      str_detect(table,"Diag1202[124]") ~ "[diagp]",
-      str_detect(table,"AdminInfo") ~ "[admin]",
-      str_detect(table,"vAdminInfo") ~ "[vadmin]",
-      str_detect(table,"DiagSejour") ~ "[diagn]",
-      str_detect(table,"ServiceMapping") ~ "[servm]",
-      str_detect(table,"Services2") ~ "[sepc]",
-      str_detect(table,"Mother") ~ "[mothe]",
-      str_detect(table,"ServicesLieux") ~ "[servm]",
-      str_detect(table,"Encounter") ~ "[encou]",
-      str_detect(table,"PriseEnCharge") ~ "[medtr]",
-      str_detect(table,"Drg") ~ "[groupage]",
+    dplyr::mutate(abrev = case_when(
+      stringr::str_detect(table,"ClinicalDoc") ~ "[sejour]",
+      stringr::str_detect(table,"Procedures") ~ "[proced]",
+      stringr::str_detect(table,"Diag22") ~ "[diags]",
+      stringr::str_detect(table,"Diag12020") ~ "[diag]",
+      stringr::str_detect(table,"Diag1202[124]") ~ "[diagp]",
+      stringr::str_detect(table,"AdminInfo") ~ "[admin]",
+      stringr::str_detect(table,"vAdminInfo") ~ "[vadmin]",
+      stringr::str_detect(table,"DiagSejour") ~ "[diagn]",
+      stringr::str_detect(table,"ServiceMapping") ~ "[servm]",
+      stringr::str_detect(table,"Services2") ~ "[sepc]",
+      stringr::str_detect(table,"Mother") ~ "[mothe]",
+      stringr::str_detect(table,"ServicesLieux") ~ "[servm]",
+      stringr::str_detect(table,"Encounter") ~ "[encou]",
+      stringr::str_detect(table,"PriseEnCharge") ~ "[medtr]",
+      stringr::str_detect(table,"Drg") ~ "[groupage]",
       TRUE ~ "ERROR"
     )) |>
-    mutate(abrev = if_else(str_detect(table,"^v.{1,}2024$") == TRUE,
-                           paste0("[","v",str_sub(abrev,2,-1)),
+    dplyr::mutate(abrev = if_else(stringr::str_detect(table,"^v.{1,}2024$") == TRUE,
+                           paste0("[","v",stringr::str_sub(abrev,2,-1)),
                            abrev)) |>
-    mutate(typeTable = case_when(
-      str_detect(table,"ClinicalDoc") ~ "sejour",
-      str_detect(table,"Procedures") ~ "procedure",
-      str_detect(table,"Diag22") ~ "diagnosticSecondaire",
-      str_detect(table,"Diag12020") ~ "sejour",
-      str_detect(table,"Diag1202[124]") ~ "diagnosticPrincipal",
-      str_detect(table,"AdminInfo") ~ "sejour",
-      str_detect(table,"DiagSejour") ~ "sejour",
-      str_detect(table,"ServiceMapping") ~ "serviceLieux",
-      str_detect(table,"Services2") ~ "servicePriseEnCharge",
-      str_detect(table,"Encounter") ~ "sejour",
-      str_detect(table,"Mother") ~ "sejour",
-      str_detect(table,"ServicesLieux") ~ "serviceLieux",
-      str_detect(table,"PriseEnCharge") ~ "MedecinTraitant",
-      str_detect(table,"Drg") ~ "sejour",
+    dplyr::mutate(typeTable = case_when(
+      stringr::str_detect(table,"ClinicalDoc") ~ "sejour",
+      stringr::str_detect(table,"Procedures") ~ "procedure",
+      stringr::str_detect(table,"Diag22") ~ "diagnosticSecondaire",
+      stringr::str_detect(table,"Diag12020") ~ "sejour",
+      stringr::str_detect(table,"Diag1202[124]") ~ "diagnosticPrincipal",
+      stringr::str_detect(table,"AdminInfo") ~ "sejour",
+      stringr::str_detect(table,"DiagSejour") ~ "sejour",
+      stringr::str_detect(table,"ServiceMapping") ~ "serviceLieux",
+      stringr::str_detect(table,"Services2") ~ "servicePriseEnCharge",
+      stringr::str_detect(table,"Encounter") ~ "sejour",
+      stringr::str_detect(table,"Mother") ~ "sejour",
+      stringr::str_detect(table,"ServicesLieux") ~ "serviceLieux",
+      stringr::str_detect(table,"PriseEnCharge") ~ "MedecinTraitant",
+      stringr::str_detect(table,"Drg") ~ "sejour",
       TRUE ~ "ERROR"
     )) |>
-    as_tibble() |>
-    mutate(column = paste0("[",column,"]")) |>
-    bind_rows(data.frame(table = "NonDisponible",
+    dplyr::as_tibble() |>
+    dplyr::mutate(column = paste0("[",column,"]")) |>
+    dplyr::bind_rows(data.frame(table = "NonDisponible",
                          column = "NonDisponible",
                          version = "2018,2019,2020",
                          taxonomie = "didp",

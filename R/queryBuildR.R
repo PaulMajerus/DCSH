@@ -70,30 +70,32 @@ queryBuildR <- function(var=character(),
                                    if(i == "sejour"){
                                      docnameCall <- paste0("[sejour].",
                                                            tableConstructionDB |>
-                                                             dplyr::filter(str_detect(version,as.character(j)) &
+                                                             dplyr::filter(stringr::str_detect(version,as.character(j)) &
                                                                              stringr::str_detect(table,"ClinicalDoc2") &
                                                                              stringr::str_to_lower(column)=="[docname]") |>
                                                              dplyr::pull(column),
-                                                           " as DocName") |> unique()
+                                                           " as DocName") |>
+                                       unique()
                                    }else if(i =="serviceLieux"){
                                      docnameCall <- paste0("[sejour].",
                                                            tableConstructionDB |>
-                                                             dplyr::filter(str_detect(version,as.character(j)) &
+                                                             dplyr::filter(stringr::str_detect(version,as.character(j)) &
                                                                              stringr::str_detect(table,"ClinicalDoc2") &
                                                                              stringr::str_detect(taxonomie,"adna")) |>
-                                                             dplyr::pull(column)|> unique(),
+                                                             dplyr::pull(column)|>
+                                                             unique(),
                                                            " as adna")
                                    }else{
 
                                      docnameCall <- paste0(tableConstructionDB |>
                                                              dplyr::filter(typeTable == i &
-                                                                             str_detect(version,as.character(j)) &
+                                                                             stringr::str_detect(version,as.character(j)) &
                                                                              stringr::str_to_lower(column)=="[docname]") |>
                                                              dplyr::pull(abrev),
                                                            ".",
                                                            tableConstructionDB |>
                                                              dplyr::filter(typeTable == i &
-                                                                             str_detect(version,as.character(j)) &
+                                                                             stringr::str_detect(version,as.character(j)) &
                                                                              stringr::str_to_lower(column)=="[docname]") |>
                                                              dplyr::pull(column),
                                                            " as DocName")
@@ -103,7 +105,7 @@ queryBuildR <- function(var=character(),
 
                                    selectVar <- paste0(tableConstructionDB |>
                                                          dplyr::filter(taxonomie %in% varASelectionner &
-                                                                         str_detect(version,as.character(j)) &
+                                                                         stringr::str_detect(version,as.character(j)) &
                                                                          typeTable == i) |>
                                                          dplyr::arrange(taxonomie) |>
                                                          dplyr::distinct(taxonomie,.keep_all=TRUE) |>
@@ -111,7 +113,7 @@ queryBuildR <- function(var=character(),
                                                        '.',
                                                        tableConstructionDB |>
                                                          dplyr::filter(taxonomie %in% varASelectionner &
-                                                                         str_detect(version,as.character(j)) &
+                                                                         stringr::str_detect(version,as.character(j)) &
                                                                          typeTable==i) |>
                                                          dplyr::arrange(taxonomie) |>
                                                          dplyr::distinct(taxonomie,.keep_all=TRUE) |>
@@ -119,7 +121,7 @@ queryBuildR <- function(var=character(),
                                                        " as ",
                                                        tableConstructionDB |>
                                                          dplyr::filter(taxonomie %in% varASelectionner &
-                                                                         str_detect(version,as.character(j)) &
+                                                                         stringr::str_detect(version,as.character(j)) &
                                                                          typeTable==i) |>
                                                          dplyr::arrange(taxonomie) |>
                                                          dplyr::distinct(taxonomie,.keep_all=TRUE) |>
@@ -145,7 +147,7 @@ queryBuildR <- function(var=character(),
                                function(j){
                                  # Choix de la table d'extraction du docname (SEJOUR VS Autre table)
                                  fromCall <- paste0(tableConstructionDB |>
-                                                      dplyr::filter(str_detect(version,as.character(j)) &
+                                                      dplyr::filter(strinrg::str_detect(version,as.character(j)) &
                                                                       stringr::str_detect(table,"ClinicalDoc2")) |>
                                                       dplyr::pull(table) |>
                                                       unique(),
@@ -160,18 +162,20 @@ queryBuildR <- function(var=character(),
                               lapply(annee,
                                      function(j){
                                        if(
-                                         all(str_detect((tableConstructionDB |>
-                                                         dplyr::filter(str_detect(version,as.character(j)) &
+                                         all(stringr::str_detect((tableConstructionDB |>
+                                                         dplyr::filter(stringr::str_detect(version,as.character(j)) &
                                                                        typeTable == i &
                                                                        taxonomie %in% var) |>
-                                                         pull(table) |> unique()),"ClinicalDoc"))
+                                                         dplyr::pull(table) |>
+                                                         unique()),
+                                                         "ClinicalDoc"))
                                        ){
                                          " "
                                        }else{
                                        paste(paste0("LEFT JOIN ",
                                                     tableConstructionDB |>
                                                       dplyr::filter(taxonomie %in% var &
-                                                                      str_detect(version,as.character(j)) &
+                                                                      stringr::str_detect(version,as.character(j)) &
                                                                       typeTable==i &
                                                                       stringr::str_detect(table,"inicalDoc")==FALSE) |>
                                                       dplyr::pull(table) |>
@@ -179,7 +183,7 @@ queryBuildR <- function(var=character(),
                                                     " ",
                                                     tableConstructionDB |>
                                                       dplyr::filter(taxonomie %in% var &
-                                                                      str_detect(version,as.character(j)) &
+                                                                      stringr::str_detect(version,as.character(j)) &
                                                                       typeTable==i &
                                                                       stringr::str_detect(table,"inicalDoc")==FALSE) |>
                                                       dplyr::pull(abrev) |>
@@ -187,14 +191,14 @@ queryBuildR <- function(var=character(),
                                                     " on ",
                                                     tableConstructionDB |>
                                                       dplyr::filter(taxonomie %in% var &
-                                                                      str_detect(version,as.character(j)) &
+                                                                      stringr::str_detect(version,as.character(j)) &
                                                                       typeTable==i &
                                                                       stringr::str_detect(table,"inicalDoc")==FALSE) |>
                                                       dplyr::pull(abrev) |>
                                                       unique(),
                                                     ".",
                                                     tableConstructionDB |>
-                                                      dplyr::filter(str_detect(version,as.character(j)) == TRUE &
+                                                      dplyr::filter(stringr::str_detect(version,as.character(j)) == TRUE &
                                                                       typeTable==i &
                                                                       stringr::str_detect(table,"inicalDoc")==FALSE) |>
                                                       dplyr::group_by(table) |>
