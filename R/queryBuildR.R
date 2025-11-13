@@ -147,7 +147,7 @@ queryBuildR <- function(var=character(),
                                function(j){
                                  # Choix de la table d'extraction du docname (SEJOUR VS Autre table)
                                  fromCall <- paste0(tableConstructionDB |>
-                                                      dplyr::filter(strinrg::str_detect(version,as.character(j)) &
+                                                      dplyr::filter(stringr::str_detect(version,as.character(j)) &
                                                                       stringr::str_detect(table,"ClinicalDoc2")) |>
                                                       dplyr::pull(table) |>
                                                       unique(),
