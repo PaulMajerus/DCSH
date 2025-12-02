@@ -76,7 +76,7 @@ queryBuildR <- function(var=character(),
                                                              dplyr::pull(column),
                                                            " as DocName") |>
                                        unique()
-                                   }else if(i =="serviceLieux"){
+                                   }else if(i =="serviceLieux" & annee != 2024){
                                      docnameCall <- paste0("[sejour].",
                                                            tableConstructionDB |>
                                                              dplyr::filter(stringr::str_detect(version,as.character(j)) &
