@@ -76,7 +76,7 @@ queryBuildR <- function(var=character(),
                                                              dplyr::pull(column),
                                                            " as DocName") |>
                                        unique()
-                                   }else if(i =="serviceLieux" & annee != 2024){
+                                   }else if(i =="serviceLieux" & j != 2024){
                                      docnameCall <- paste0("[sejour].",
                                                            tableConstructionDB |>
                                                              dplyr::filter(stringr::str_detect(version,as.character(j)) &
@@ -101,7 +101,7 @@ queryBuildR <- function(var=character(),
                                                            " as DocName")
                                    }
                                    if("adna" %in% var &
-                                      i == "serviceLieux" & annee != 2024){ varASelectionner <- var[-which(var=="adna")]}
+                                      i == "serviceLieux" & j != 2024){ varASelectionner <- var[-which(var=="adna")]}
 
                                    selectVar <- paste0(tableConstructionDB |>
                                                          dplyr::filter(taxonomie %in% varASelectionner &
@@ -205,10 +205,10 @@ queryBuildR <- function(var=character(),
                                                       dplyr::filter(any(taxonomie %in% var)) |>
                                                       dplyr::ungroup() |>
                                                       dplyr::filter(
-                                                        if (i == "serviceLieux" & annee != 2024) column == "[NO_SEJOUR]"
+                                                        if (i == "serviceLieux" & j != 2024) column == "[NO_SEJOUR]"
                                                         else stringr::str_to_lower(column) == "[docname]") |>
                                                       dplyr::pull(column),
-                                                    if(i == "serviceLieux" & annee != 2024) " = [sejour].[Numero_sejour]"
+                                                    if(i == "serviceLieux" & j != 2024) " = [sejour].[Numero_sejour]"
                                                     else " = [sejour].[docName]"),
                                              collapse=" ")
                                        }
