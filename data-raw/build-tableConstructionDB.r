@@ -110,6 +110,10 @@ if (!is.null(con)) {
       stringr::str_to_lower(column) == "lieu_procedure" ~ "prlp",
       stringr::str_to_lower(column) == "technique_anesthesie" ~ "prta",
       stringr::str_to_lower(column) == "code_procedure" ~"prcp",
+      stringr::str_detect(table,"Diag[12]202[124]") &
+        stringr::str_to_lower(column) == "service" ~ "dish", #Diagnostic service hospitalier
+      stringr::str_detect(table,"Diag[12]202[124]") &
+        stringr::str_to_lower(column) == "servpk" ~ "dicj", #Diagnostic clé de jointure
       stringr::str_detect(table,"Procedures") &
         stringr::str_to_lower(column) == "specialite" ~ "prsm",
       stringr::str_detect(table,"Diag1202[124]") &
