@@ -24,7 +24,7 @@ liste_tables_et_colonnes <- function(con) {
                        "_delete|Union",
                        negate = TRUE)
   tables <- stringr::str_subset(tables,
-                       "v.{1,}2024$",
+                       "^v.{1,}2024$",
                        negate = TRUE)
   result <- lapply(tables, function(tbl) {
     colonnes <- DBI::dbListFields(con, tbl)
