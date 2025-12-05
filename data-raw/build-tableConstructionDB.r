@@ -123,9 +123,9 @@ if (!is.null(con)) {
       stringr::str_detect(table,"Diag22") &
         stringr::str_to_lower(column) == "code" ~ "dise",
       stringr::str_detect(table,"Services2") &
-        stringr::str_to_lower(column) == "site_hospitalier" ~ "smsi",
+        stringr::str_to_lower(column) == "site_hospitalier" ~ "smce",
       stringr::str_detect(table,"Services2") &
-        stringr::str_to_lower(column) == "service" ~ "smsh",
+        stringr::str_to_lower(column) == "service" ~ "smsm",
       stringr::str_detect(table,"Services2") &
         stringr::str_to_lower(column) == "date_debut" ~ "smdd",
       stringr::str_detect(table,"Services2") &
