@@ -134,7 +134,7 @@ queryBuildR <- function(var=character(),
                                                         collapse = ",")
 
                                      if(matriculeNat == TRUE){
-                                       selectQuery <- paste0("p.mat_an as matNat, ",selectQuery)
+                                       selectQuery <- paste0("p.mat_an as mana, ",selectQuery)
                                                                       }
                                    return(selectQuery)
                                  })
@@ -235,7 +235,7 @@ queryBuildR <- function(var=character(),
                        })
 
   if(matriculeNat == TRUE){
-    matNat <- "LEFT JOIN (
+    mana <- "LEFT JOIN (
     SELECT [mat_an], [pama]
     FROM (
       SELECT [mat_an], [mat_incci_an], [mat_chdn_an], [mat_hrs_an], [mat_chem_an], [mat_chl_an], [mat_cfb_an]
@@ -248,9 +248,9 @@ queryBuildR <- function(var=character(),
     ) AS unpvt
   ) AS p
   ON p.pama = [sejour].[Matricule]"
-    matNat <- stringr::str_replace_all(matNat,"\n","")
+    mana <- stringr::str_replace_all(mana,"\n","")
   }else{
-    matNat <- ""
+    mana <- ""
   }
 
 
@@ -259,7 +259,7 @@ queryBuildR <- function(var=character(),
                     paste("SELECT",unlist(selectQuery)[[x]],
                           "FROM",unlist(fromQuery)[[x]],
                           unlist(leftjoinQuery)[[x]],
-                          matNat,
+                          mana,
                           unlist(whereQuery)[[x]])
                   })
 
