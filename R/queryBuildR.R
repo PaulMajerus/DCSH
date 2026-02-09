@@ -38,6 +38,16 @@ queryBuildR <- function(var=character(),
                         annee=character(),
                         matriculeNat = FALSE){
 
+  if(any(stringr::str_detect(var,"^sh|^sm")==TRUE &
+     2022 %in% annee)){
+
+    conversion <- data.frame(sh = c("shsi","shdd","shdf","shsh"),
+                             sm = c("smce","smdd","smdf","smsm")) |>
+      dplyr::filter(sh %in% var | sm %in% var)
+
+    var <- unique(c(var,conversion$sh,conversion$sm))
+  }
+
 
   # Détermine les versions de codage impliquées dans la query
   version <- tableConstructionDB |>
