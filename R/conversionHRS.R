@@ -112,16 +112,12 @@ conversionHRS <- function(lst_df=list()){
 
     # Ensuite on repaire les tables sm et sh qui sont celles de 2022
     lst_df <- lapply(1:length(lst_df),function(y){
-      if(y %in% idx_sh){
+      if(y %in% c(idx_sh,idx_sm)){
+        print(y)
         lst_df[[y]] <- lst_df[[y]] |>
           dplyr::left_join(lst_df[[idx_2022]] |>
                       dplyr::select(adna,DocName,sods,idcf),
-                    by="adna")
-      } else if(y %in% idx_sm){
-        lst_df[[y]] <- lst_df[[y]] |>
-          dplyr::left_join(lst_df[[idx_2022]] |>
-                      dplyr::select(DocName,adna,sods,idcf),
-                    by="DocName")
+                    by=c(if("adna" %in% names(lst_df[[y]] )) "adna" else "DocName"))
       } else {
         return(lst_df[[y]])
       }
