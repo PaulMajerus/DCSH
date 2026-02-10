@@ -45,7 +45,7 @@ queryBuildR <- function(var=character(),
                              sm = c("smce","smdd","smdf","smsm")) |>
       dplyr::filter(sh %in% var | sm %in% var)
 
-    var <- unique(c(var,conversion$sh,conversion$sm))
+    var <- unique(c(var,conversion$sh,conversion$sm,"idcf","sods","adna"))
   }
 
 

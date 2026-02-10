@@ -28,5 +28,6 @@ loadData <- function(query = character()){
 
   DBI::dbDisconnect(con)
 
+
   return(dataLoaded)
 }
