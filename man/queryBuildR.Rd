@@ -4,14 +4,17 @@
 \alias{queryBuildR}
 \title{Générateur de requêtes SQL pour extractions DCSH}
 \usage{
-queryBuildR(var = character(), annee = character(), matriculeNat = FALSE)
+queryBuildR(var = "all", annee = character(), matriculeNat = FALSE)
 }
 \arguments{
-\item{var}{Character vector. Liste des noms de variables/taxonomies DCSH à extraire (ex: \code{c("DP", "DAS", "Age")})}
+\item{var}{Character vector. Liste des noms de variables/taxonomies DCSH à extraire
+(ex: \code{c("DP", "DAS", "Age")}).
+La valeur par défaut est \code{"all"}, ce qui signifie que l’ensemble des variables disponibles
+dans \code{tableConstructionDB} pour les années spécifiées est extrait.}
 
-\item{annee}{Character vector. Liste des années concernées (ex: \code{c("2022", "2023")})}
+\item{annee}{Character vector. Liste des années concernées (ex: \code{c("2022", "2023")}).}
 
-\item{matriculeNat}{Bolean value. Faut-il inclure ou non la variable "matricule national".}
+\item{matriculeNat}{Logical value. Faut-il inclure ou non la variable "matricule national".}
 }
 \value{
 Une liste de chaînes de caractères, chacune correspondant à une requête SQL prête à exécuter.
@@ -30,16 +33,22 @@ La fonction :
 \item Sélectionne les bonnes tables de base et d’attributs via \code{typeTable}.
 \item Génère dynamiquement la clause \code{SELECT} incluant les bons alias.
 \item Gère les jointures conditionnelles avec les tables secondaires.
-\item Restreint le résultat à l'année d’intérêt via la clause \code{WHERE}.
+\item Restreint le résultat aux années d’intérêt via la clause \code{WHERE}.
 }
+
+Lorsque \code{var = "all"}, la fonction se comporte comme un extracteur exhaustif :
+toutes les variables valides pour les années demandées sont incluses dans les requêtes générées.
 
 Le champ \code{DocName} est systématiquement inclus dans les extractions.
 }
 \examples{
-# Génère les requêtes pour extraire DP et DAS pour 2022 et 2023
+# Génère les requêtes pour extraire toutes les variables pour 2022
+req <- queryBuildR(annee = "2022")
+
+# Génère les requêtes pour extraire uniquement certaines variables
 req <- queryBuildR(var = c("adda", "sods"), annee = c("2022", "2023"))
 cat(req[[1]])
 }
 \seealso{
-\code{\link{loadData}} pour exécuter les requêtes construites
+\code{\link{loadData}} pour exécuter les requêtes construites.
 }

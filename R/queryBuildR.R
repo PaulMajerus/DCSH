@@ -1,14 +1,17 @@
 #' Générateur de requêtes SQL pour extractions DCSH
 #'
 #' Cette fonction construit dynamiquement une ou plusieurs requêtes SQL selon des variables DCSH (taxonomie)
-#' et les années concernées. Elle s’appuie sur la table interne `tableConstructionDB` pour identifier les bonnes
+#' et les années concernées. Elle s’appuie sur la table interne \code{tableConstructionDB} pour identifier les bonnes
 #' colonnes, versions, tables et jointures à inclure.
 #'
 #' Les requêtes générées peuvent ensuite être exécutées via la fonction \code{\link{loadData}} du package \code{DCSH}.
 #'
-#' @param var Character vector. Liste des noms de variables/taxonomies DCSH à extraire (ex: \code{c("DP", "DAS", "Age")})
-#' @param annee Character vector. Liste des années concernées (ex: \code{c("2022", "2023")})
-#' @param matriculeNat Bolean value. Faut-il inclure ou non la variable "matricule national".
+#' @param var Character vector. Liste des noms de variables/taxonomies DCSH à extraire
+#'   (ex: \code{c("DP", "DAS", "Age")}).
+#'   La valeur par défaut est \code{"all"}, ce qui signifie que l’ensemble des variables disponibles
+#'   dans \code{tableConstructionDB} pour les années spécifiées est extrait.
+#' @param annee Character vector. Liste des années concernées (ex: \code{c("2022", "2023")}).
+#' @param matriculeNat Logical value. Faut-il inclure ou non la variable "matricule national".
 #'
 #' @return Une liste de chaînes de caractères, chacune correspondant à une requête SQL prête à exécuter.
 #'
@@ -19,24 +22,39 @@
 #'   \item Sélectionne les bonnes tables de base et d’attributs via \code{typeTable}.
 #'   \item Génère dynamiquement la clause \code{SELECT} incluant les bons alias.
 #'   \item Gère les jointures conditionnelles avec les tables secondaires.
-#'   \item Restreint le résultat à l'année d’intérêt via la clause \code{WHERE}.
+#'   \item Restreint le résultat aux années d’intérêt via la clause \code{WHERE}.
 #' }
+#'
+#' Lorsque \code{var = "all"}, la fonction se comporte comme un extracteur exhaustif :
+#' toutes les variables valides pour les années demandées sont incluses dans les requêtes générées.
 #'
 #' Le champ \code{DocName} est systématiquement inclus dans les extractions.
 #'
-#' @seealso \code{\link{loadData}} pour exécuter les requêtes construites
+#' @seealso \code{\link{loadData}} pour exécuter les requêtes construites.
 #'
 #' @export
 #'
 #' @examples
-#' # Génère les requêtes pour extraire DP et DAS pour 2022 et 2023
+#' # Génère les requêtes pour extraire toutes les variables pour 2022
+#' req <- queryBuildR(annee = "2022")
+#'
+#' # Génère les requêtes pour extraire uniquement certaines variables
 #' req <- queryBuildR(var = c("adda", "sods"), annee = c("2022", "2023"))
 #' cat(req[[1]])
 
 
-queryBuildR <- function(var=character(),
+queryBuildR <- function(var="all",
                         annee=character(),
                         matriculeNat = FALSE){
+
+  if("all" %in% var){
+    var <- tableConstructionDB |>
+      dplyr::filter(stringr::str_detect(version,paste(annee,collapse="|")) &
+                      is.na(taxonomie) == FALSE &
+                      !(taxonomie%in% c("DocName"))) |>
+      dplyr::pull(taxonomie) |>
+      unique()
+  }
 
   if(any(stringr::str_detect(var,"^sh|^sm")==TRUE &
      2022 %in% annee)){
