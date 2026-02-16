@@ -78,20 +78,27 @@ conversionHRS <- function(lst_df=list()){
   flags <- lapply(lst_df, function(df) {
     list(
       has_sh_sm = any(stringr::str_detect(names(df), "^(sh|sm)")),
-      has_2022  = "sods" %in% names(df) &&
-        any(stringr::str_sub(as.character(df$sods), 1, 4) == "2022", na.rm = TRUE)
+      has_202223  = "sods" %in% names(df) &&
+        any(stringr::str_sub(as.character(df$sods), 1, 4) %in% c("2022","2023"), na.rm = TRUE)
     )
   })
 
   has_any_sh_sm <- any(sapply(flags, `[[`, "has_sh_sm"))
-  has_any_2022  <- any(sapply(flags, `[[`, "has_2022"))
+  has_any_202223  <- any(sapply(flags, `[[`, "has_202223"))
 
-  if (has_any_sh_sm && has_any_2022){
+  if (has_any_sh_sm && has_any_202223){
     # D'abord on déterminer l'indice des tables concernées par une modification et la table avec sods
-    idx_2022 <- which(
+    idx_22 <- which(
       sapply(lst_df, function(df) {
         "sods" %in% names(df) &&
-          any(stringr::str_sub(as.character(df$sods), 1, 4) == "2022", na.rm = TRUE)
+          any(stringr::str_sub(as.character(df$sods), 1, 4) %in%  c("2022"), na.rm = TRUE)
+      })
+    )
+
+    idx_23 <- which(
+      sapply(lst_df, function(df) {
+        "sods" %in% names(df) &&
+          any(stringr::str_sub(as.character(df$sods), 1, 4) %in%  c("2023"), na.rm = TRUE)
       })
     )
 
@@ -113,17 +120,32 @@ conversionHRS <- function(lst_df=list()){
     # Ensuite on repaire les tables sm et sh qui sont celles de 2022
     lst_df <- lapply(1:length(lst_df),function(y){
       if(y %in% c(idx_sh,idx_sm)){
-        print(y)
+
         lst_df[[y]] <- lst_df[[y]] |>
-          dplyr::left_join(lst_df[[idx_2022]] |>
+          dplyr::left_join(lst_df[[idx_22]] |>
                       dplyr::select(adna,DocName,sods,idcf),
                     by=c(if("adna" %in% names(lst_df[[y]] )) "adna" else "DocName"))
+
+        if(length(unique(lst_df[[y]]$idcf)) == 1){
+          if(is.na(unique(lst_df[[y]]$idcf))==TRUE){
+
+            lst_df[[y]] <-lst_df[[y]] |>
+              dplyr::select(where(~ any(!is.na(.))))
+
+            lst_df[[y]] <-lst_df[[y]] |>
+              dplyr::left_join(lst_df[[idx_23]] |>
+                                 dplyr::select(adna,DocName,sods,idcf),
+                               by=c(if("adna" %in% names(lst_df[[y]])) "adna" else "DocName"))
+          }
+        }else{
+          return(lst_df[[y]])
+        }
       } else {
         return(lst_df[[y]])
       }
     })
 
-    # On repaireSM 2022 et SH2022
+    # On repaire SM 2022 et SH2022
     idx_sh2022 <- which(
       sapply(lst_df, function(df) {
         any(stringr::str_detect(names(df), "^sh")) &
@@ -135,6 +157,21 @@ conversionHRS <- function(lst_df=list()){
       sapply(lst_df, function(df) {
         any(stringr::str_detect(names(df), "^sm")) &
           all(stringr::str_sub(df$sods,1,4) == "2022")
+      })
+    )
+
+    # On repaire SPC 2023 et SH 2023
+    idx_sh2023 <- which(
+      sapply(lst_df, function(df) {
+        any(stringr::str_detect(names(df), "^sh")) &
+          all(stringr::str_sub(df$sods,1,4) == "2023")
+      })
+    )
+
+    idx_sm2023 <- which(
+      sapply(lst_df, function(df) {
+        any(stringr::str_detect(names(df), "^sm")) &
+          all(stringr::str_sub(df$sods,1,4) == "2023")
       })
     )
 
@@ -161,7 +198,7 @@ conversionHRS <- function(lst_df=list()){
     sm20200Trim2 <- sm20200Trim2 |>
       dplyr::rename(any_of(mapppingSm))
 
-    # On les remplace dans les tables de bases
+    # On les remplace dans les tables de bases 2022
     lst_df[[idx_sh2022]]<-lst_df[[idx_sh2022]] |>
       dplyr::filter((lubridate::ymd(stringr::str_sub(sods,1,8)) <  lubridate::ymd(stringr::str_sub("20220701",1,8)))|(idcf != "70129077")) |>
       dplyr::bind_rows(sm20200Trim2)
@@ -169,6 +206,29 @@ conversionHRS <- function(lst_df=list()){
     lst_df[[idx_sm2022]]<-lst_df[[idx_sm2022]] |>
       dplyr::filter((lubridate::ymd(stringr::str_sub(sods,1,8)) <  lubridate::ymd(stringr::str_sub("20220701",1,8)))|(idcf != "70129077")) |>
       dplyr::bind_rows(sh20200Trim2)
+
+    # On récupère smsm pour le HRS année 2023
+    con <- DBI::dbConnect(odbc::odbc(), dsn = "dcshdb")
+
+    query <- "SELECT [NO_SEJOUR] as adna, [SPC] as smsm FROM [DCSHDB].[curative].[SPCHRS2022]"
+    sm2023 <- DBI::dbGetQuery(con,query) |>
+      tibble::as_tibble() |>
+      dplyr::rename(any_of(mapppingSh))
+    DBI::dbDisconnect(con)
+
+    # On récupère shsh pour le HRS année 2023
+    sh2023 <- lst_df[[idx_sm2023]] |>
+      dplyr::filter(idcf == "70129077")|>
+      dplyr::rename(any_of(mapppingSm))
+
+    # On remplace les shsh et smsm de l'année 2023
+    lst_df[[idx_sh2023]] <- lst_df[[idx_sh2023]] |>
+      filter(idcf != "70129077") |>
+      bind_rows(sh2023)
+
+    lst_df[[idx_sm2023]] <- lst_df[[idx_sm2023]] |>
+      filter(idcf != "70129077") |>
+      bind_rows(sm2023)
 
     # Je sélection les seules colonnes initialement présente
     lst_df<-lapply(1:length(lst_df),
