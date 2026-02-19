@@ -129,8 +129,8 @@ conversionHRS <- function(lst_df=list()){
         if(length(unique(lst_df[[y]]$idcf)) == 1){
           if(is.na(unique(lst_df[[y]]$idcf))==TRUE){
 
-            lst_df[[y]] <-lst_df[[y]] |>
-              dplyr::select(where(~ any(!is.na(.))))
+            lst_df[[y]] <- dplyr::select(lst_df[[y]],
+                                         where(~ any(!is.na(.))),matches("^sm|^sh"))
 
             lst_df[[y]] <-lst_df[[y]] |>
               dplyr::left_join(lst_df[[idx_23]] |>

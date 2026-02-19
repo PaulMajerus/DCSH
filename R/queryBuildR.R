@@ -51,7 +51,7 @@ queryBuildR <- function(var="all",
     var <- tableConstructionDB |>
       dplyr::filter(stringr::str_detect(version,paste(annee,collapse="|")) &
                       is.na(taxonomie) == FALSE &
-                      !(taxonomie%in% c("DocName")) &
+                      !(taxonomie %in% c("DocName")) &
                       is.na(taxonomie) == FALSE) |>
       dplyr::pull(taxonomie) |>
       unique()
