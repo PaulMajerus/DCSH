@@ -105,7 +105,7 @@ queryBuildR <- function(var="all",
                                                              dplyr::pull(column),
                                                            " as DocName") |>
                                        unique()
-                                   }else if(i =="serviceLieux" & j != 2024){
+                                   }else if(i =="serviceLieux" & !(j %in% c(2024:2050))){
                                      docnameCall <- paste0("[sejour].",
                                                            tableConstructionDB |>
                                                              dplyr::filter(stringr::str_detect(version,as.character(j)) &
@@ -130,7 +130,7 @@ queryBuildR <- function(var="all",
                                                            " as DocName")
                                    }
                                    if("adna" %in% var &
-                                      i == "serviceLieux" & j != 2024){ varASelectionner <- var[-which(var=="adna")]}
+                                      i == "serviceLieux" & !(j %in% c(2024:2050))){ varASelectionner <- var[-which(var=="adna")]}
 
                                    selectVar <- paste0(tableConstructionDB |>
                                                          dplyr::filter(taxonomie %in% varASelectionner &
