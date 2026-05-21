@@ -24,7 +24,7 @@ liste_tables_et_colonnes <- function(con) {
                        "_delete|Union",
                        negate = TRUE)
   tables <- stringr::str_subset(tables,
-                                "^(v(?!ServicesLieux).{0,}2024$)",
+                                "^(v(?!ServicesLieux).{0,}202[45]$)",
                        negate = TRUE)
   result <- lapply(tables, function(tbl) {
     colonnes <- DBI::dbListFields(con, tbl)
@@ -183,7 +183,7 @@ if (!is.null(con)) {
     dplyr::mutate(abrev = if_else(stringr::str_detect(table,"^v.{1,}202[45]$") == TRUE,
                            paste0("[","v",stringr::str_sub(abrev,2,-1)),
                            abrev)) |>
-    dplyr::filter(str_detect(table,"^v.{1,}2025$") == FALSE) |>
+    #dplyr::filter(str_detect(table,"^v.{1,}2025$") == FALSE | table=="vServicesLieux2025") |>
     dplyr::mutate(typeTable = case_when(
       stringr::str_detect(table,"ClinicalDoc") ~ "sejour",
       stringr::str_detect(table,"Procedures") ~ "procedure",
