@@ -183,6 +183,7 @@ if (!is.null(con)) {
     dplyr::mutate(abrev = if_else(stringr::str_detect(table,"^v.{1,}202[45]$") == TRUE,
                            paste0("[","v",stringr::str_sub(abrev,2,-1)),
                            abrev)) |>
+    dplyr::filter(str_detect(table,"^v.{1,}2025$") == FALSE) |>
     dplyr::mutate(typeTable = case_when(
       stringr::str_detect(table,"ClinicalDoc") ~ "sejour",
       stringr::str_detect(table,"Procedures") ~ "procedure",
