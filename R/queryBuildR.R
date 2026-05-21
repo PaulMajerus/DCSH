@@ -234,10 +234,10 @@ queryBuildR <- function(var="all",
                                                       dplyr::filter(any(taxonomie %in% var)) |>
                                                       dplyr::ungroup() |>
                                                       dplyr::filter(
-                                                        if (i == "serviceLieux" & j != 2024) column == "[NO_SEJOUR]"
+                                                        if (i =="serviceLieux" & !(j %in% c(2024:2050))) column == "[NO_SEJOUR]"
                                                         else stringr::str_to_lower(column) == "[docname]") |>
                                                       dplyr::pull(column),
-                                                    if(i == "serviceLieux" & j != 2024) " = [sejour].[Numero_sejour]"
+                                                    if(i =="serviceLieux" & !(j %in% c(2024:2050))) " = [sejour].[Numero_sejour]"
                                                     else " = [sejour].[docName]"),
                                              collapse=" ")
                                        }
