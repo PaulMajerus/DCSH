@@ -180,7 +180,7 @@ if (!is.null(con)) {
       stringr::str_detect(table,"Drg") ~ "[groupage]",
       TRUE ~ "ERROR"
     )) |>
-    dplyr::mutate(abrev = if_else(stringr::str_detect(table,"^v.{1,}2024$") == TRUE,
+    dplyr::mutate(abrev = if_else(stringr::str_detect(table,"^v.{1,}202[45]$") == TRUE,
                            paste0("[","v",stringr::str_sub(abrev,2,-1)),
                            abrev)) |>
     dplyr::mutate(typeTable = case_when(
