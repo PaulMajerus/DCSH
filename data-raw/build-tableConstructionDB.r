@@ -110,13 +110,13 @@ if (!is.null(con)) {
       stringr::str_to_lower(column) == "lieu_procedure" ~ "prlp",
       stringr::str_to_lower(column) == "technique_anesthesie" ~ "prta",
       stringr::str_to_lower(column) == "code_procedure" ~"prcp",
-      stringr::str_detect(table,"Diag[12]202[124]") &
+      stringr::str_detect(table,"Diag[12]202[1245]") &
         stringr::str_to_lower(column) == "service" ~ "dish", #Diagnostic service hospitalier
-      stringr::str_detect(table,"Diag[12]202[124]") &
+      stringr::str_detect(table,"Diag[12]202[1245]") &
         stringr::str_to_lower(column) == "servpk" ~ "dicj", #Diagnostic clé de jointure
       stringr::str_detect(table,"Procedures") &
         stringr::str_to_lower(column) == "specialite" ~ "prsm",
-      stringr::str_detect(table,"Diag1202[124]") &
+      stringr::str_detect(table,"Diag1202[1245]") &
         stringr::str_to_lower(column) == "code" ~ "didp",
       stringr::str_detect(table,"Diag12020") &
         stringr::str_to_lower(column) == "code" ~ "dids",
@@ -167,7 +167,7 @@ if (!is.null(con)) {
       stringr::str_detect(table,"Procedures") ~ "[proced]",
       stringr::str_detect(table,"Diag22") ~ "[diags]",
       stringr::str_detect(table,"Diag12020") ~ "[diag]",
-      stringr::str_detect(table,"Diag1202[124]") ~ "[diagp]",
+      stringr::str_detect(table,"Diag1202[1245]") ~ "[diagp]",
       stringr::str_detect(table,"AdminInfo") ~ "[admin]",
       stringr::str_detect(table,"vAdminInfo") ~ "[vadmin]",
       stringr::str_detect(table,"DiagSejour") ~ "[diagn]",
