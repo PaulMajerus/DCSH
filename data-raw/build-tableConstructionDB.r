@@ -189,7 +189,7 @@ if (!is.null(con)) {
       stringr::str_detect(table,"Procedures") ~ "procedure",
       stringr::str_detect(table,"Diag22") ~ "diagnosticSecondaire",
       stringr::str_detect(table,"Diag12020") ~ "sejour",
-      stringr::str_detect(table,"Diag1202[124]") ~ "diagnosticPrincipal",
+      stringr::str_detect(table,"Diag1202[1245]") ~ "diagnosticPrincipal",
       stringr::str_detect(table,"AdminInfo") ~ "sejour",
       stringr::str_detect(table,"DiagSejour") ~ "sejour",
       stringr::str_detect(table,"ServiceMapping") ~ "serviceLieux",
