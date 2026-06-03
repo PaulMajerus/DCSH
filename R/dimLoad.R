@@ -39,19 +39,15 @@ dimLoad <- function(){
   tables <- DBI::dbListTables(con)
 
   #Sélectionne les tables DIM
-  tablesDim <- tables[which(stringr::str_detect(tables,"^dim_")==TRUE)]
+  tableCodeDiag <- c("dim_apr_drg",
+                     "dim_diagnostics",
+                     "dim_mdc",
+                     "dim_procedures")
 
   # Table de conversion des noms vers la taxonomie standard
-  tableConversionNom <- data.frame(nameIn = tablesDim,
-                                   nameOut = c("remove","prta","grds",
-                                               "soms","dids",
-                                               "idcf","prlp","grms",
-                                               "grmc","adme","adad",
-                                               "prcp","adpp","grrs",
-                                               "nnsn","shsh","shsi",
-                                               "grss","prsm"))
-
-  tableConversionNom <- dplyr::filter(tableConversionNom,nameOut != "remove")
+  tableConversionNom <- data.frame(nameIn = tableCodeDiag,
+                                   nameOut = c("grds","dids","grms",
+                                               "prcp"))
 
   # Construction de la query d'import des tables
 
@@ -62,9 +58,47 @@ dimLoad <- function(){
   tablesDimension <- setNames(lapply(1:length(query),
                                      function(n){
                                        DBI::dbGetQuery(con,query[n]) |>
-                                         tibble::as_tibble()
+                                         tibble::as_tibble() |>
+                                         dplyr::mutate(Dimension = tableConversionNom$nameOut[n])
                                      }),
                               janitor::make_clean_names(paste0("dim ",tableConversionNom$nameOut),"small_camel"))
+
+
+  tablesDimensionGroupees <- DBI::dbGetQuery(con,"SELECT * FROM curative.dim_2025") |>
+    tibble::as_tibble() |>
+    dplyr::mutate(Dimension = dplyr::case_when(
+      Dimension == "admission" ~ "adma",
+      Dimension == "anesthesie" ~ "prta",
+      Dimension == "assurabilite" ~ "paas",
+      Dimension == "destination" ~ "soms",
+      Dimension == "etablissement" ~ "idcf",
+      Dimension == "lieu_procedure" ~ "prlp",
+      Dimension == "med_surg" ~ "grmc",
+      Dimension == "modalite_entree" ~ "adme",
+      Dimension == "mode_adressage" ~ "adad",
+      Dimension == "nationalite" ~ "pana",
+      Dimension == "passage_urgence" ~ "adpu",
+      Dimension == "presence_admission" ~ "dipa",
+      Dimension == "provenance" ~ "adpp",
+      Dimension == "rom" ~ "grrs",
+      Dimension == "seqnaissance" ~ "nnsn",
+      Dimension == "service" ~ "shsh",
+      Dimension == "site" ~ "shsi",
+      Dimension == "soi" ~ "grss",
+      Dimension == "specialite" ~ "prsm",
+    )) |>
+    dplyr::group_by(Dimension) |>
+    dplyr::group_split() |>
+    (\(x) {
+      names(x) <- janitor::make_clean_names(
+        paste0("dim_", sapply(x, \(df) unique(df$Dimension))),
+        case = "small_camel"
+      )
+      x
+    })()
+
+
+  tablesDimension <- c(tablesDimensionGroupees,tablesDimension)
 
 
   DBI::dbDisconnect(con)
